@@ -1,0 +1,176 @@
+/* 🌆 Background dan layout dasar */
+body {
+  background: url("../assets/images/polibatam.jpg") center/cover no-repeat fixed;
+  font-family: "Poppins", sans-serif;
+  color: #333;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.overlay-bg {
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 🔷 Header */
+.header {
+  background-color: #a9a28c;
+  border-bottom: 1px solid #dee2e6;
+  padding: 15px 20px;
+  color: #fff;
+}
+
+.header h4 {
+  font-weight: 600;
+  color: #000;
+}
+
+/* 🔹 Sidebar */
+.sidebar {
+  width: 220px;
+  background-color: rgba(255, 255, 255, 0.96);
+  border-right: 1px solid #dee2e6;
+}
+
+.sidebar .nav-link {
+  color: #333;
+  font-weight: 500;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  transition: all 0.2s ease;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+  background-color: #a9a28c;
+  color: #fff !important;
+}
+
+/* 💡 Hero Box */
+.hero-box {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  padding: 40px 30px;
+  margin: 60px auto 20px;
+  width: 80%;
+  max-width: 700px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.hero-box h2 {
+  color: #0d47a1;
+  font-weight: 700;
+}
+
+.hero-box p {
+  font-size: 15px;
+  color: #333;
+}
+
+.hero-box .btn-primary {
+  background-color: #a9a28c;
+  border: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.hero-box .btn-primary:hover {
+  background-color: #003f99;
+}
+
+/* 🔔 Notifikasi Popup */
+.notification-popup {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 260px;
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  display: none;
+  z-index: 1000;
+}
+
+.notification-popup.show {
+  display: block;
+}
+
+/* 🦶 Footer */
+.footer {
+  background-color: #a9a28c;
+  color: #000;
+  font-weight: 500;
+  padding: 10px 0;
+  text-align: center;
+  margin-top: auto;
+}
+
+.footer a {
+  color: #000;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+/* 👤 Profile Dropdown */
+.profile-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  width: 180px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  display: none;
+  z-index: 500;
+  text-align: left;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.profile-dropdown.show {
+  display: block;
+}
+
+.profile-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: 15px;
+  border-width: 0 8px 8px 8px;
+  border-style: solid;
+  border-color: transparent transparent #fff transparent;
+}
+
+.profile-dropdown h6 {
+  font-weight: 600;
+  text-align: center;
+  margin: 8px 0;
+  color: #333;
+}
+
+.profile-dropdown a {
+  display: block;
+  padding: 8px 15px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+.profile-dropdown a:hover {
+  background-color: #f3f6ff;
+  color: #007bff;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(-5px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+

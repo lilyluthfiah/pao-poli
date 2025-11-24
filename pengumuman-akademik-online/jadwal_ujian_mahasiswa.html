@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIA-IF | Jadwal Ujian</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background-color: #9b8e7e;
+      color: white;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+
+    .icons {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon {
+      background-color: white;
+      color: #333;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* ===== LAYOUT ===== */
+    .layout {
+      display: flex;
+    }
+
+    /* ===== SIDEBAR ===== */
+    aside {
+      width: 160px;
+      background-color: #f3f3f3;
+      border-right: 1px solid #ccc;
+      min-height: calc(100vh - 100px);
+      padding-top: 10px;
+    }
+
+    aside ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    aside li {
+      padding: 10px 20px;
+      color: #333;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    aside li:hover {
+      background-color: #ddd;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      flex: 1;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Politeknik_Negeri_Batam_gedung_depan.jpg/640px-Politeknik_Negeri_Batam_gedung_depan.jpg') no-repeat center center/cover;
+      padding: 30px;
+    }
+
+    .content {
+      background-color: white;
+      border-radius: 15px;
+      max-width: 700px;
+      margin: auto;
+      padding: 25px 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .content h2 {
+      text-align: center;
+      font-size: 22px;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    /* ===== TABLE ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #999;
+      padding: 8px 10px;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f3f3f3;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    td:first-child {
+      text-align: center;
+      width: 40px;
+    }
+
+    td:nth-child(2) {
+      width: 160px;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background-color: #e8e0d4;
+      text-align: center;
+      padding: 10px;
+      font-size: 13px;
+      color: #222;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      aside {
+        display: none;
+      }
+
+      .content {
+        width: 95%;
+        padding: 20px;
+      }
+
+      table {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <h1>SELAMAT DATANG DI PAO-POLIBATAM</h1>
+    <div class="icons">
+      <div class="icon">👤</div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside>
+      <ul>
+        <li>Pengumuman</li>
+        <li>Jadwal Ujian</li>
+        <li>Jadwal Kuliah</li>
+        <li>Beasiswa</li>
+        <li>Notification</li>
+      </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main>
+      <div class="content">
+        <h2>Jadwal Ujian</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Tanggal / Waktu</th>
+              <th>Nama Ujian</th>
+              <th>Mata Kuliah</th>
+              <th>Ruang</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1.</td>
+              <td>2025-05-04 14.00 WIB</td>
+              <td>Ujian Tengah Semester</td>
+              <td>Dasar Pemrograman</td>
+              <td>GU 705</td>
+            </tr>
+            <tr>
+              <td>2.</td>
+              <td>2025-05-05 09.45 WIB</td>
+              <td>Ujian Akhir Semester 1</td>
+              <td>Pengantar Proyek Perangkat Lunak</td>
+              <td>GU 706</td>
+            </tr>
+            <tr>
+              <td>3.</td>
+              <td>2025-05-11 13.00 WIB</td>
+              <td>Ujian Akhir Semester 2</td>
+              <td>Dasar Pemrograman Web</td>
+              <td>GU 702</td>
+            </tr>
+            <tr>
+              <td>4.</td>
+              <td>2025-11-13 13.30 WIB</td>
+              <td>Ujian Kenaikan Semester</td>
+              <td>Sistem Komputer</td>
+              <td>GU 604</td>
+            </tr>
+            <tr>
+              <td>5.</td>
+              <td>2025-03-08 15.00 WIB</td>
+              <td class=>Seminar</td>
+              <td>Seminar</td>
+              <td>Auditorium</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    © 2025 Pengumuman Akademik Online - POLIBATAM | Kebijakan Privasi | Kontak
+  </footer>
+
+</body>
+</html>

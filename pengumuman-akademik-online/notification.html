@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notification - PAO</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- CSS eksternal -->
+  <link rel="stylesheet" href="css/styleN.css">
+</head>
+<body>
+  <!-- 🔹 Header -->
+  <header class="header d-flex justify-content-between align-items-center px-4 position-relative">
+    <div>
+      <h4 class="fw-bold mb-0">Halo Nama,</h4>
+      <h5 class="fw-bold">Selamat Datang di Pengumuman Akademik Online!</h5>
+    </div>
+    <div class="d-flex align-items-center gap-3 position-relative">
+      <!-- 🔔 Notifikasi popup -->
+      <i class="bi bi-bell fs-3 text-dark" id="notifIcon" title="Notifikasi"></i>
+      <div class="notification-popup shadow" id="notifPopup">
+        <h6 class="fw-bold mb-2">📢 Notifikasi</h6>
+        <div id="notifPopupContent">
+          <p class="text-muted small">Belum ada notifikasi.</p>
+        </div>
+      </div>
+
+      <!-- 🔸 Klik ikon profil untuk menuju profile.html -->
+      <i class="bi bi-person-circle fs-3 text-dark profile-icon" title="Profile"></i>
+      <i class="bi bi-box-arrow-right fs-3 text-dark logout-btn" title="Logout"></i>
+    </div>
+  </header>
+
+  <!-- 🔹 Layout utama -->
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <aside class="sidebar p-3">
+      <ul class="nav flex-column">
+        <li class="nav-item"><a class="nav-link" href="pengumuman_mahasiswa2.html">Pengumuman</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Jadwal Ujian</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Jadwal Kuliah</a></li>
+        <li class="nav-item"><a class="nav-link" href="">Beasiswa</a></li>
+      </ul>
+    </aside>
+
+    <!-- Konten -->
+    <main class="content p-4 flex-grow-1">
+      <div class="notification-box text-center">
+        <h4 class="fw-bold mb-3">Notifikasi</h4>
+        <div class="notification-inner border rounded-3 mx-auto p-4" id="notificationContent">
+          <p class="text-muted">Memuat notifikasi...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 🔹 Footer -->
+  <footer class="footer text-center text-white py-2">
+    © 2025 Pengumuman Akademik Online - POLIBATAM |
+    <a href="#" class="text-warning text-decoration-none">Kebijakan Privasi</a> |
+    <a href="#" class="text-warning text-decoration-none">Kontak</a>
+  </footer>
+
+  <!-- 🔸 Script utama -->
+  <script>
+    // 🔸 Logout
+    document.querySelector(".logout-btn").addEventListener("click", () => {
+      alert("Berhasil logout!");
+      window.location.href = "login.html";
+    });
+
+    // 🔸 Klik ikon profil menuju profile.html
+    document.querySelector(".profile-icon").addEventListener("click", () => {
+      window.location.href = "profile.html";
+    });
+
+    // 🔸 Ambil data login dari localStorage
+    const username = localStorage.getItem("username");
+    const role = localStorage.getItem("userRole");
+    const notificationContent = document.getElementById("notificationContent");
+    const notifPopup = document.getElementById("notifPopup");
+    const notifPopupContent = document.getElementById("notifPopupContent");
+
+    // 🔔 popup toggle
+    document.getElementById("notifIcon").addEventListener("click", () => {
+      notifPopup.classList.toggle("show");
+      const notifText = localStorage.getItem("latestNotification");
+      if (notifText) {
+        notifPopupContent.innerHTML = `<div class="alert alert-info py-2 mb-0 text-start">${notifText}</div>`;
+      } else {
+        notifPopupContent.innerHTML = `<p class="text-muted small mb-0">Belum ada notifikasi.</p>`;
+      }
+    });
+
+    // Tutup popup jika klik di luar
+    document.addEventListener("click", (e) => {
+      const icon = document.getElementById("notifIcon");
+      if (!notifPopup.contains(e.target) && !icon.contains(e.target)) {
+        notifPopup.classList.remove("show");
+      }
+    });
+
+    // 🔸 Validasi login
+    if (!username || !role) {
+      alert("Silakan login terlebih dahulu!");
+      window.location.href = "login.html";
+    } else {
+      document.querySelector(".header h4").textContent = `Halo ${username},`;
+      document.querySelector(".header h5").textContent = `SELAMAT DATANG DI SIA-IF (${role})`;
+
+      // 🔸 Jika dosen → bisa mengetik & menyimpan notifikasi
+      if (role.toLowerCase() === "dosen") {
+        notificationContent.innerHTML = `
+          <h5 class="text-start mb-3">Kelola Notifikasi:</h5>
+          <textarea id="notifInput" class="form-control mb-3" rows="5" placeholder="Tulis pengumuman atau pemberitahuan di sini..."></textarea>
+          <button class="btn btn-primary" id="saveNotifBtn">Simpan Notifikasi</button>
+          <div id="savedNotif" class="alert alert-info mt-3 text-start d-none"></div>
+        `;
+
+        const saved = localStorage.getItem("latestNotification");
+        if (saved) {
+          const savedNotif = document.getElementById("savedNotif");
+          savedNotif.textContent = "Notifikasi saat ini: " + saved;
+          savedNotif.classList.remove("d-none");
+        }
+
+        document.getElementById("saveNotifBtn").addEventListener("click", () => {
+          const notifText = document.getElementById("notifInput").value.trim();
+          if (notifText === "") {
+            alert("Isi notifikasi tidak boleh kosong!");
+            return;
+          }
+          localStorage.setItem("latestNotification", notifText);
+          alert("Notifikasi berhasil disimpan!");
+          const savedNotif = document.getElementById("savedNotif");
+          savedNotif.textContent = "Notifikasi saat ini: " + notifText;
+          savedNotif.classList.remove("d-none");
+        });
+      }
+
+      // 🔸 Jika mahasiswa → hanya bisa membaca
+      else if (role.toLowerCase() === "mahasiswa") {
+        const notifText = localStorage.getItem("latestNotification");
+        if (notifText) {
+          notificationContent.innerHTML = `
+            <h5 class="text-start mb-3">📢 Pengumuman:</h5>
+            <div class="alert alert-info text-start">${notifText}</div>
+          `;
+        } else {
+          notificationContent.innerHTML = `<p class="text-muted">Belum ada notifikasi.</p>`;
+        }
+      }
+    }
+  </script>
+</body>
+</html>

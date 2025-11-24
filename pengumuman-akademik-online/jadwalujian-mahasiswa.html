@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jadwal Ujian Mahasiswa - PAO POLIBATAM</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- CSS Global -->
+  <link rel="stylesheet" href="css/styledashboardMahasiswa.css">
+</head>
+
+<body>
+  <div class="overlay-bg">
+    <!-- 🔷 HEADER (Sama seperti dashboard) -->
+    <header class="header d-flex justify-content-between align-items-center px-4 position-relative">
+      <div>
+        <h4 class="fw-bold mb-0" id="greetingNama">Halo, ...</h4>
+        <h5 class="fw-bold" id="greetingRole">SELAMAT DATANG DI PAO-POLIBATAM</h5>
+      </div>
+
+      <div class="d-flex align-items-center gap-3 position-relative">
+        <!-- 🔔 Notifikasi -->
+        <i class="bi bi-bell fs-3 text-dark" id="notifIcon" title="Notifikasi"></i>
+        <div class="notification-popup shadow" id="notifPopup">
+          <h6 class="fw-bold mb-2">📢 Notifikasi</h6>
+          <div id="notifPopupContent">
+            <p class="text-muted small">Belum ada notifikasi.</p>
+          </div>
+        </div>
+
+        <!-- 👤 Profile Dropdown -->
+        <div class="position-relative">
+          <i class="bi bi-person-circle fs-3 text-dark" id="profileIcon" title="Profile"></i>
+          <div class="profile-dropdown shadow" id="profileDropdown">
+            <h6>Settings</h6>
+            <a href="profile.html"><i class="bi bi-person me-2"></i>Profile</a>
+            <a href="change-password.html"><i class="bi bi-key me-2"></i>Change Password</a>
+          </div>
+        </div>
+
+        <!-- 🚪 Logout -->
+        <i class="bi bi-box-arrow-right fs-3 text-dark logout-btn" title="Logout"></i>
+      </div>
+    </header>
+
+    <!-- 🔹 MAIN LAYOUT -->
+    <div class="d-flex flex-grow-1">
+      <!-- SIDEBAR -->
+      <aside class="sidebar p-3">
+        <ul class="nav flex-column">
+          <li class="nav-item"><a class="nav-link" href="dashboard-mahasiswa.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="pengumuman-mahasiswa.html">Pengumuman</a></li>
+          <li class="nav-item"><a class="nav-link active" href="jadwalujian-mahasiswa.html">Jadwal Ujian</a></li>
+          <li class="nav-item"><a class="nav-link" href="jadwalkuliah-mahasiswa.html">Jadwal Kuliah</a></li>
+          <li class="nav-item"><a class="nav-link" href="beasiswamahasiswa.html">Beasiswa</a></li>
+        </ul>
+      </aside>
+
+      <!-- KONTEN UTAMA -->
+      <main class="content p-4 flex-grow-1">
+        <div class="container">
+          <h3 class="fw-bold text-primary mb-4 text-center">
+            <i class="bi bi-calendar-event"></i> Jadwal Ujian Semester Ganjil 2025/2026
+          </h3>
+
+          <!-- Tabel Jadwal -->
+          <div class="card shadow-sm border-0">
+            <div class="card-body">
+              <table class="table table-bordered text-center align-middle" id="scheduleTable">
+                <thead class="table-primary">
+                  <tr>
+                    <th>Tanggal</th>
+                    <th>Mata Kuliah</th>
+                    <th>Ruang</th>
+                    <th>Waktu</th>
+                    <th>Dosen</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer text-center text-white py-2">
+      © 2025 Pengumuman Akademik Online - POLIBATAM |
+      <a href="#" class="text-dark text-decoration-none fw-semibold">Kebijakan Privasi</a> |
+      <a href="#" class="text-dark text-decoration-none fw-semibold">Kontak</a>
+    </footer>
+  </div>
+
+  <!-- SCRIPT -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  // === LOGIN PROTECTION ===
+  const usersData = JSON.parse(localStorage.getItem("usersData")) || [];
+  const username = localStorage.getItem("username");
+  const role = localStorage.getItem("userRole");
+  const userData = usersData.find(u => u.nama === username && u.role === role);
+
+  if (!userData) {
+    alert("Silakan login terlebih dahulu!");
+    window.location.href = "login.html";
+  }
+
+  // === GREETING ===
+  document.getElementById("greetingNama").textContent = `Halo, ${userData.nama}`;
+  document.getElementById("greetingRole").textContent = `SELAMAT DATANG DI PAO-POLIBATAM (${userData.role.toUpperCase()})`;
+
+  // === LOGOUT ===
+  document.querySelector(".logout-btn").addEventListener("click", () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userRole");
+    alert("Berhasil logout!");
+    window.location.href = "login.html";
+  });
+
+  // === LOAD JADWAL UJIAN ===
+  function loadJadwal() {
+    const jadwal = JSON.parse(localStorage.getItem("jadwalUjian")) || [];
+    const tableBody = document.getElementById("tableBody");
+    tableBody.innerHTML = "";
+
+    if (jadwal.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="5" class="text-muted text-center">Belum ada jadwal ujian.</td></tr>`;
+      return;
+    }
+
+    jadwal.forEach(item => {
+      const row = `
+        <tr>
+          <td>${item.tanggal}</td>
+          <td>${item.mataKuliah}</td>
+          <td>${item.ruang}</td>
+          <td>${item.waktu}</td>
+          <td>${item.dosen}</td>
+        </tr>`;
+      tableBody.insertAdjacentHTML("beforeend", row);
+    });
+  }
+
+  // === AUTO UPDATE ===
+  document.addEventListener("DOMContentLoaded", loadJadwal);
+  window.addEventListener("storage", loadJadwal); // 🔄 update otomatis kalau dosen ubah data
+</script>
+
+</body>
+</html>

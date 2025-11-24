@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jadwal Kuliah Dosen - PAO POLIBATAM</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- CSS Eksternal -->
+  <link rel="stylesheet" href="css/styledashboardDosen.css">
+</head>
+
+<body>
+  <div class="overlay-bg">
+    <!-- 🔷 HEADER -->
+    <header class="header d-flex justify-content-between align-items-center px-4 position-relative">
+      <div>
+        <h4 class="fw-bold mb-0" id="greetingNama">Halo, ...</h4>
+        <h5 class="fw-bold" id="greetingRole">SELAMAT DATANG DI PAO-POLIBATAM</h5>
+      </div>
+
+      <div class="d-flex align-items-center gap-3 position-relative">
+        <!-- 🔔 Notifikasi -->
+        <i class="bi bi-bell fs-3 text-dark" id="notifIcon" title="Notifikasi"></i>
+        <div class="notification-popup shadow" id="notifPopup">
+          <h6 class="fw-bold mb-2">📢 Notifikasi</h6>
+          <div id="notifPopupContent">
+            <p class="text-muted small">Belum ada notifikasi.</p>
+          </div>
+        </div>
+
+        <!-- 👤 Profile Dropdown -->
+        <div class="position-relative">
+          <i class="bi bi-person-circle fs-3 text-dark" id="profileIcon" title="Profile"></i>
+          <div class="profile-dropdown shadow" id="profileDropdown">
+            <h6>Settings</h6>
+            <a href="profile.html"><i class="bi bi-person me-2"></i>Profile</a>
+            <a href="change-password.html"><i class="bi bi-key me-2"></i>Change Password</a>
+          </div>
+        </div>
+
+        <!-- 🚪 Logout -->
+        <i class="bi bi-box-arrow-right fs-3 text-dark logout-btn" title="Logout"></i>
+      </div>
+    </header>
+
+    <!-- 🔹 LAYOUT UTAMA -->
+    <div class="d-flex flex-grow-1">
+      <!-- SIDEBAR -->
+      <aside class="sidebar p-3">
+        <ul class="nav flex-column">
+          <li class="nav-item"><a class="nav-link" href="dashboard-dosen.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="pengumuman-dosen.html">Pengumuman</a></li>
+          <li class="nav-item"><a class="nav-link" href="jadwalujian-dosen.html">Jadwal Ujian</a></li>
+          <li class="nav-item"><a class="nav-link active" href="jadwalkuliah-dosen.html">Jadwal Kuliah</a></li>
+          <li class="nav-item"><a class="nav-link" href="beasiswadosen.html">Beasiswa</a></li>
+        </ul>
+      </aside>
+
+      <!-- KONTEN UTAMA -->
+      <main class="content p-4 flex-grow-1">
+        <h3 class="fw-bold text-primary mb-4">
+          <i class="bi bi-calendar-week"></i> Jadwal Kuliah Semester Ganjil 2025/2026
+        </h3>
+
+        <div class="mb-3 text-end">
+          <button class="btn btn-primary" id="addScheduleBtn">
+            <i class="bi bi-plus-circle"></i> Tambah Jadwal
+          </button>
+        </div>
+
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <table class="table table-bordered text-center align-middle" id="scheduleTable">
+              <thead class="table-primary">
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Mata Kuliah</th>
+                  <th>Ruang</th>
+                  <th>Waktu</th>
+                  <th>Dosen</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer text-center text-white py-2">
+      © 2025 Pengumuman Akademik Online - POLIBATAM |
+      <a href="#" class="text-dark text-decoration-none fw-semibold">Kebijakan Privasi</a> |
+      <a href="#" class="text-dark text-decoration-none fw-semibold">Kontak</a>
+    </footer>
+  </div>
+
+  <!-- 🪟 MODAL -->
+  <div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content p-4">
+        <h5 id="modalTitle" class="fw-bold mb-3">Tambah Jadwal</h5>
+        <input type="date" id="tanggal" class="form-control mb-3" required>
+        <input type="text" id="mataKuliah" class="form-control mb-3" placeholder="Nama Mata Kuliah" required>
+        <input type="text" id="ruang" class="form-control mb-3" placeholder="Ruang" required>
+        <input type="text" id="waktu" class="form-control mb-3" placeholder="Contoh: 08.00 - 10.00" required>
+        <input type="text" id="dosen" class="form-control mb-3" placeholder="Nama Dosen" required>
+        <div class="text-end">
+          <button class="btn btn-secondary me-2" data-bs-dismiss="modal">Batal</button>
+          <button class="btn btn-primary" id="saveBtn">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // === LOGIN PROTECTION ===
+    const usersData = JSON.parse(localStorage.getItem("usersData")) || [];
+    const username = localStorage.getItem("username");
+    const role = localStorage.getItem("userRole");
+    const userData = usersData.find(u => u.nama === username && u.role === role);
+
+    if (!userData) {
+      alert("Silakan login terlebih dahulu!");
+      window.location.href = "login.html";
+    }
+
+    // === GREETING ===
+    document.getElementById("greetingNama").textContent = `Halo, ${userData.nama}`;
+    document.getElementById("greetingRole").textContent = `SELAMAT DATANG DI PAO-POLIBATAM (${userData.role.toUpperCase()})`;
+
+    // === LOGOUT ===
+    document.querySelector(".logout-btn").addEventListener("click", () => {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("username");
+      localStorage.removeItem("userRole");
+      alert("Berhasil logout!");
+      window.location.href = "login.html";
+    });
+
+    // === NOTIFIKASI ===
+    const notifPopup = document.getElementById("notifPopup");
+    const notifIcon = document.getElementById("notifIcon");
+    const notifPopupContent = document.getElementById("notifPopupContent");
+
+    notifIcon.addEventListener("click", () => {
+      notifPopup.classList.toggle("show");
+      const notifText = localStorage.getItem("latestNotification") || "Belum ada notifikasi.";
+
+      notifPopupContent.innerHTML = `
+        <div class="mb-2">
+          <textarea id="notifInput" class="form-control form-control-sm" rows="3">${notifText}</textarea>
+        </div>
+        <button class="btn btn-sm btn-primary w-100" id="saveNotif">Simpan Notifikasi</button>
+      `;
+      document.getElementById("saveNotif").addEventListener("click", () => {
+        const newNotif = document.getElementById("notifInput").value.trim();
+        if (newNotif) {
+          localStorage.setItem("latestNotification", newNotif);
+          alert("Notifikasi berhasil diperbarui!");
+        } else {
+          alert("Teks notifikasi tidak boleh kosong!");
+        }
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!notifPopup.contains(e.target) && !notifIcon.contains(e.target))
+        notifPopup.classList.remove("show");
+    });
+
+    // === PROFILE DROPDOWN ===
+    const profileIcon = document.getElementById("profileIcon");
+    const profileDropdown = document.getElementById("profileDropdown");
+    profileIcon.addEventListener("click", () => profileDropdown.classList.toggle("show"));
+    document.addEventListener("click", (e) => {
+      if (!profileDropdown.contains(e.target) && !profileIcon.contains(e.target))
+        profileDropdown.classList.remove("show");
+    });
+
+    // === CRUD JADWAL KULIAH ===
+    const tableBody = document.getElementById("tableBody");
+    const modal = new bootstrap.Modal(document.getElementById("scheduleModal"));
+    const saveBtn = document.getElementById("saveBtn");
+    const addScheduleBtn = document.getElementById("addScheduleBtn");
+    let editingIndex = null;
+
+    function loadJadwal() {
+      const jadwal = JSON.parse(localStorage.getItem("jadwalKuliah")) || [];
+      tableBody.innerHTML = "";
+      jadwal.forEach((item, index) => {
+        const row = `
+          <tr>
+            <td>${item.tanggal}</td>
+            <td>${item.mataKuliah}</td>
+            <td>${item.ruang}</td>
+            <td>${item.waktu}</td>
+            <td>${item.dosen}</td>
+            <td>
+              <button class="btn btn-sm btn-warning me-2" onclick="editJadwal(${index})"><i class="bi bi-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="hapusJadwal(${index})"><i class="bi bi-trash"></i></button>
+            </td>
+          </tr>`;
+        tableBody.insertAdjacentHTML("beforeend", row);
+      });
+    }
+
+    addScheduleBtn.addEventListener("click", () => {
+      editingIndex = null;
+      document.getElementById("modalTitle").textContent = "Tambah Jadwal";
+      document.getElementById("tanggal").value = "";
+      document.getElementById("mataKuliah").value = "";
+      document.getElementById("ruang").value = "";
+      document.getElementById("waktu").value = "";
+      document.getElementById("dosen").value = "";
+      modal.show();
+    });
+
+    saveBtn.addEventListener("click", () => {
+      const jadwal = JSON.parse(localStorage.getItem("jadwalKuliah")) || [];
+      const newData = {
+        tanggal: document.getElementById("tanggal").value,
+        mataKuliah: document.getElementById("mataKuliah").value,
+        ruang: document.getElementById("ruang").value,
+        waktu: document.getElementById("waktu").value,
+        dosen: document.getElementById("dosen").value
+      };
+      if (editingIndex === null) jadwal.push(newData);
+      else jadwal[editingIndex] = newData;
+      localStorage.setItem("jadwalKuliah", JSON.stringify(jadwal));
+      loadJadwal();
+      modal.hide();
+    });
+
+    window.editJadwal = (index) => {
+      const jadwal = JSON.parse(localStorage.getItem("jadwalKuliah")) || [];
+      const data = jadwal[index];
+      editingIndex = index;
+      document.getElementById("modalTitle").textContent = "Edit Jadwal";
+      document.getElementById("tanggal").value = data.tanggal;
+      document.getElementById("mataKuliah").value = data.mataKuliah;
+      document.getElementById("ruang").value = data.ruang;
+      document.getElementById("waktu").value = data.waktu;
+      document.getElementById("dosen").value = data.dosen;
+      modal.show();
+    };
+
+    window.hapusJadwal = (index) => {
+      if (confirm("Yakin ingin menghapus jadwal ini?")) {
+        const jadwal = JSON.parse(localStorage.getItem("jadwalKuliah")) || [];
+        jadwal.splice(index, 1);
+        localStorage.setItem("jadwalKuliah", JSON.stringify(jadwal));
+        window.dispatchEvent(new Event("storage"));
+        loadJadwal();
+      }
+    };
+
+    loadJadwal();
+  </script>
+</body>
+</html>

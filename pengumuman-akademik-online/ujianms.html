@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jadwal Ujian Perkuliahan</title>
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* Sidebar kiri */
+.sidebar {
+  width: 200px;
+  background-color: #82c1ff;
+  padding: 30px 10px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar ul li {
+  margin: 18px 0;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+  display: block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* Main area */
+.main {
+  flex: 1;
+  background: url('https://www.polibatam.ac.id/wp-content/uploads/2020/03/polibatam.jpg') center/cover no-repeat;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Overlay gelap tipis */
+.main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 0;
+}
+
+/* Header */
+header {
+  position: relative;
+  z-index: 1;
+  background-color: #66b3ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  color: white;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.user-icon {
+  position: absolute;
+  right: 30px;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+/* Filter form */
+.filter {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.9);
+  width: fit-content;
+  margin: 20px auto;
+  padding: 10px 20px;
+  border-radius: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.filter input,
+.filter select {
+  padding: 7px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.btn-cari {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 7px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-tambah {
+  background-color: #8e44ad;
+  color: white;
+  border: none;
+  padding: 7px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Table */
+.table-container {
+  position: relative;
+  z-index: 1;
+  width: 50%;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th, td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ccc;
+}
+
+th {
+  background-color: #f5f5f5;
+}
+
+/* Footer */
+footer {
+  position: relative;
+  z-index: 1;
+  background-color: #66b3ff;
+  text-align: center;
+  color: #000;
+  padding: 8px;
+  font-size: 14px;
+}
+
+footer a {
+  color: #000;
+  text-decoration: none;
+  font-weight: 500;
+}
+  </style>
+
+  <script>
+    document.querySelector('.btn-cari').addEventListener('click', () => {
+  alert('Fitur pencarian belum diaktifkan.');
+});
+
+document.querySelector('.btn-tambah').addEventListener('click', () => {
+  alert('Form tambah jadwal akan tersedia nanti.');
+});
+
+  </script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <ul>
+      <li><a href="#">Pengumuman</a></li>
+      <li><a href="#" class="active">Jadwal Ujian</a></li>
+      <li><a href="#">Jadwal Kuliah</a></li>
+      <li><a href="#">Beasiswa</a></li>
+      <li><a href="#">Notification</a></li>
+      <li><a href="#">Profile</a></li>
+    </ul>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <header>
+      <h1>Jadwal Ujian Perkuliahan</h1>
+      <div class="user-icon">👤</div>
+    </header>
+
+    <!-- Form Filter -->
+    <div class="filter">
+      <input type="text" placeholder="Cari Mata Kuliah...">
+      <select>
+        <option>Semester</option>
+      </select>
+      <select>
+        <option>Tahun</option>
+      </select>
+      <button class="btn-cari">Cari</button>
+      <button class="btn-tambah">Tambah Jadwal</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Waktu</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-11-03</td>
+            <td>11.10 s/d selesai</td>
+          </tr>
+          <tr>
+            <td>2025-11-04</td>
+            <td>14.30 s/d selesai</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      © 2025 Sistem Informasi Akademik - POLIBATAM |
+      <a href="#">Kebijakan Privasi</a> |
+      <a href="#">Kontak</a>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  background: url('polibatam.jpg') center/cover no-repeat fixed;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+}
+
+.header {
+  background-color: #72A8EB;
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: black;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.sidebar {
+  width: 220px;
+  background: linear-gradient(180deg, #ffffff 0%, #e9f1ff 100%);
+  min-height: calc(100vh - 60px);
+  border-right: 2px solid #d1e0ff;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+  position: relative;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.sidebar .nav-link {
+  color: #333;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.sidebar .nav-link i {
+  font-size: 18px;
+  color: #007bff;
+  transition: 0.3s;
+}
+
+.sidebar .nav-link:hover {
+  background-color: #e3efff;
+  transform: translateX(4px);
+}
+
+.sidebar .nav-link.active {
+  background: linear-gradient(to right, #007bff, #00c4ff);
+  color: white !important;
+  font-weight: 600;
+}
+
+.sidebar .nav-link.active i {
+  color: white;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.notification-box {
+  margin: 50px auto;
+  background: white;
+  border-radius: 12px;
+  width: 550px;
+  min-height: 350px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 2; 
+}
+
+/* ✨ Efek interaktif untuk ikon notifikasi */
+#notifIcon {
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+#notifIcon:hover {
+  transform: scale(1.15);
+  color: #007bff;
+}
+
+#notifIcon:active {
+  transform: scale(0.95);
+  color: #0056b3;
+}
+
+.notification-inner {
+  width: 90%;
+  height: auto;
+  border: 2px solid rgba(120, 120, 120, 0.3);
+  border-radius: 8px;
+  margin: auto;
+  padding: 20px;
+}
+
+.footer {
+  background-color: #72A8EB;
+  color: white;
+  padding: 10px 0;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+body * {
+  pointer-events: auto !important;
+}
+
+/* 🔔 Popup Notifikasi Header */
+.notification-popup {
+  position: absolute;
+  top: 60px;
+  right: 40px;
+  width: 320px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+  padding: 12px 15px;
+  display: none;
+  z-index: 9999;
+}
+
+.notification-popup.show {
+  display: block;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.notification-popup h6 {
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

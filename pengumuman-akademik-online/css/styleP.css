@@ -1,0 +1,99 @@
+body {
+  background: url('polibatam.jpg') center/cover no-repeat;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  color: #333;
+}
+
+.header {
+  background-color: #72A8EB;
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: black;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* 🔹 Sidebar putih */
+.sidebar {
+  width: 220px;
+  background: linear-gradient(180deg, #ffffff 0%, #e9f1ff 100%);
+  min-height: calc(100vh - 60px);
+  border-right: 2px solid #d1e0ff;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+  position: relative;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.sidebar .nav-link {
+     color: #333;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.sidebar .nav-link i {
+  font-size: 18px;
+  color: #007bff;
+  transition: 0.3s;
+}
+
+.sidebar .nav-link:hover {
+  background-color: #e3efff;
+  transform: translateX(4px);
+}
+
+.sidebar .nav-link.active {
+  background: linear-gradient(to right, #007bff, #00c4ff);
+  color: white !important;
+  font-weight: 600;
+}
+
+.sidebar .nav-link.active i {
+  color: white;
+}
+
+/* 🔹 Konten tengah */
+.content {
+  flex-grow: 1;
+  padding: 30px;
+}
+
+/* 🔹 Kotak pengumuman */
+.pengumuman-card {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+}
+
+/* 🔹 Card masing-masing pengumuman */
+.announcement {
+  background-color: #f8f9fa;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.announcement:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 🔹 Footer */
+.footer {
+  background-color: #72A8EB;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  color: white;
+}

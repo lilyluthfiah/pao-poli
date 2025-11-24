@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Form Daftar - PAO</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- CSS Eksternal -->
+  <link rel="stylesheet" href="css/styledaftar.css">
+</head>
+<body>
+  <div class="container d-flex flex-column justify-content-center align-items-center min-vh-100">
+    <div class="card login-card shadow-lg rounded-4 position-relative">
+      <div class="card-body p-4">
+        <h3 class="text-center fw-bold mb-4">Form Pendaftaran</h3>
+
+        <form id="registerForm" class="form-section">
+          <div class="form-group">
+            <label class="form-label">Role</label>
+            <select class="form-select rounded-pill" id="role" required>
+              <option selected disabled>Pilih Role</option>
+              <option value="mahasiswa">Mahasiswa</option>
+              <option value="dosen">Dosen</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nama Lengkap</label>
+            <input type="text" class="form-control rounded-pill" id="nama" placeholder="Masukkan nama lengkap" required>
+          </div>
+
+          <div class="form-group" id="nimField">
+            <label class="form-label">NIM</label>
+            <input type="text" class="form-control rounded-pill" id="nim" placeholder="Masukkan NIM">
+          </div>
+
+          <div class="form-group d-none" id="nidnField">
+            <label class="form-label">NIDN</label>
+            <input type="text" class="form-control rounded-pill" id="nidn" placeholder="Masukkan NIDN">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nomor HP</label>
+            <input type="text" class="form-control rounded-pill" id="phone" placeholder="Masukkan nomor HP" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control rounded-pill" id="email" placeholder="Masukkan email" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Alamat</label>
+            <input type="text" class="form-control rounded-pill" id="alamat" placeholder="Masukkan alamat" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Program Studi</label>
+            <input type="text" class="form-control rounded-pill" id="prodi" placeholder="Masukkan program studi" required>
+          </div>
+
+          <div class="form-group mahasiswa-field">
+            <label class="form-label">Kelas</label>
+            <input type="text" class="form-control rounded-pill" id="kelas" placeholder="Contoh: IF-5A">
+          </div>
+
+          <div class="form-group mahasiswa-field">
+            <label class="form-label">Status</label>
+            <input type="text" class="form-control rounded-pill" id="status" placeholder="Aktif">
+          </div>
+
+          <div class="form-group dosen-field d-none">
+            <label class="form-label">Jabatan Akademik</label>
+            <input type="text" class="form-control rounded-pill" id="jabatanAkademik" placeholder="Contoh: Lektor Kepala">
+          </div>
+
+          <div class="form-group dosen-field d-none">
+            <label class="form-label">Jabatan Struktural</label>
+            <input type="text" class="form-control rounded-pill" id="jabatanStruktural" placeholder="Contoh: Koordinator Prodi">
+          </div>
+
+          <div class="form-group w-100">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control rounded-pill" id="password" placeholder="Masukkan password" required>
+          </div>
+
+          <!-- 🔹 Tombol Daftar dan Link Login -->
+          <div class="form-group w-100 text-center mt-4 d-flex justify-content-center align-items-center gap-3 flex-wrap">
+            <button type="submit" class="btn btn-dark rounded-pill fw-semibold px-5">Daftar</button>
+            <p class="mb-0 text-dark">
+              Sudah punya akun?
+              <a href="login.html" class="text-primary text-decoration-none fw-semibold">Login</a>
+            </p>
+          </div>
+        </form>
+
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            // 🔐 Pastikan tidak ada status login nyangkut saat mendaftar
+            // (supaya habis daftar, proses login benar-benar lewat halaman login)
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("username");
+            localStorage.removeItem("userRole");
+
+            // 🔹 Tampilkan/Hide field sesuai role
+            const roleSelect = document.getElementById("role");
+            roleSelect.addEventListener("change", () => {
+              const mahasiswaFields = document.querySelectorAll(".mahasiswa-field");
+              const dosenFields = document.querySelectorAll(".dosen-field");
+              const nimField = document.getElementById("nimField");
+              const nidnField = document.getElementById("nidnField");
+
+              if (roleSelect.value === "mahasiswa") {
+                mahasiswaFields.forEach((el) => el.classList.remove("d-none"));
+                dosenFields.forEach((el) => el.classList.add("d-none"));
+                nimField.classList.remove("d-none");
+                nidnField.classList.add("d-none");
+                // bersihkan nilai field dosen ketika ganti ke mahasiswa
+                document.getElementById("nidn").value = "";
+                document.getElementById("jabatanAkademik").value = "";
+                document.getElementById("jabatanStruktural").value = "";
+              } else if (roleSelect.value === "dosen") {
+                mahasiswaFields.forEach((el) => el.classList.add("d-none"));
+                dosenFields.forEach((el) => el.classList.remove("d-none"));
+                nimField.classList.add("d-none");
+                nidnField.classList.remove("d-none");
+                // bersihkan nilai field mahasiswa ketika ganti ke dosen
+                document.getElementById("nim").value = "";
+                document.getElementById("kelas").value = "";
+                document.getElementById("status").value = "";
+              }
+            });
+
+            // 🔹 Event submit form
+            document.getElementById("registerForm").addEventListener("submit", function (e) {
+              e.preventDefault();
+
+              const roleRaw = document.getElementById("role").value;
+              // cegah "Pilih Role"
+              if (!roleRaw || roleRaw === "Pilih Role") {
+                alert("Silakan pilih role terlebih dahulu!");
+                return;
+              }
+              const role = roleRaw.trim().toLowerCase(); // normalisasi
+
+              const userData = {
+                role,
+                nama: document.getElementById("nama").value.trim(),
+                nim: document.getElementById("nim").value.trim(),
+                nidn: document.getElementById("nidn").value.trim(),
+                phone: document.getElementById("phone").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                alamat: document.getElementById("alamat").value.trim(),
+                prodi: document.getElementById("prodi").value.trim(),
+                kelas: document.getElementById("kelas").value.trim(),
+                status: document.getElementById("status").value.trim(),
+                jabatanAkademik: document.getElementById("jabatanAkademik").value.trim(),
+                jabatanStruktural: document.getElementById("jabatanStruktural").value.trim(),
+                password: document.getElementById("password").value.trim(),
+              };
+
+              // cek field wajib
+              if (!userData.nama || !userData.password || !userData.phone || !userData.email) {
+                alert("Mohon lengkapi semua data wajib!");
+                return;
+              }
+
+              // 🔹 Ambil data lama dari localStorage
+              const usersData = JSON.parse(localStorage.getItem("usersData")) || [];
+
+              // 🔹 Cek apakah user sudah terdaftar (nama + role)
+              const isExist = usersData.some(
+                (u) => (u.nama || "").trim() === userData.nama && (u.role || "").trim().toLowerCase() === userData.role
+              );
+
+              if (isExist) {
+                alert("Nama ini sudah terdaftar pada role tersebut. Silakan login atau gunakan nama lain.");
+                return;
+              }
+
+              // 🔹 Simpan user baru ke array
+              usersData.push(userData);
+              localStorage.setItem("usersData", JSON.stringify(usersData));
+
+              alert("Pendaftaran berhasil! Silakan login.");
+              window.location.href = "login.html";
+            });
+          });
+        </script>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer text-center text-white py-2">
+    © 2025 Pengumuman Akademik Online - POLIBATAM |
+    <a href="#" class="text-warning text-decoration-none">Kebijakan Privasi</a> |
+    <a href="#" class="text-warning text-decoration-none">Kontak</a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

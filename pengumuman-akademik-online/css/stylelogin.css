@@ -1,0 +1,53 @@
+/* 🌄 Background */
+body {
+  background: url('../assets/images/polibatam.jpg') center/cover no-repeat;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  margin: 0;
+}
+
+/* 💠 Kotak login */
+.login-card {
+  background-color: rgba(125, 181, 243, 0.95);
+  width: 380px;
+  border-radius: 20px;
+  position: relative;
+}
+
+/* 🎓 Dropdown Role */
+.role-dropdown {
+  position: absolute;
+  right: 20px;
+  top: 60px;
+}
+
+.role-dropdown select {
+  width: 120px;
+  background-color: white;
+  border: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+/* 🔘 Tombol */
+.btn-dark {
+  background-color: #0d3b66;
+  border: none;
+}
+
+.btn-dark:hover {
+  background-color: #002855;
+  transform: scale(1.03);
+}
+
+/* 🦶 Footer */
+.footer {
+  background-color: #0d3b66;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  color: white;
+}

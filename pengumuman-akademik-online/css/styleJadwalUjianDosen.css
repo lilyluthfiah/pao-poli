@@ -1,0 +1,116 @@
+body { 
+  padding-top: 56px; 
+  min-height: 100vh; 
+  display: flex; 
+  flex-direction: column; 
+}
+
+/* 🔹 Navbar */
+.navbar { 
+  background: #60B7FF;
+}
+
+.navbar-brand, .navbar-title, .btn-link, .btn-outline-light,
+.navbar-brand i, .navbar-title i, .btn-link i, .btn-outline-light i { 
+  color: #000; 
+}
+
+.btn-outline-light {
+  border-color: #000; 
+}
+
+.btn-outline-light:hover {
+  background-color: #000; 
+  color: white; 
+}
+
+.navbar-title {
+  color: #000; 
+  font-size: 1.0rem; 
+  font-weight: 500;
+  margin-right: auto; 
+  margin-left: 20px; 
+}
+
+/* 🔹 Sidebar */
+.sidebar { 
+  min-height: calc(100vh - 56px - 38px); 
+  background-color: #60B7FF;
+}
+
+.sidebar-header {
+  background: linear-gradient(to right, #007bff, #00aaff); 
+  color: white; 
+  font-weight: bold; 
+}
+
+.list-group-item a {
+  text-decoration: none;
+  color: black;
+}
+
+.list-group-item:hover { 
+  background: linear-gradient(to right, #007bff, #00aaff); 
+}
+
+.list-group-item:hover a { 
+  color: #ffffff;
+}
+
+/* 🔹 Footer */
+footer { 
+  margin-top: auto; 
+  background: #60B7FF;
+  padding: 10px 0; 
+}
+
+footer span, footer a {
+  color: #000; 
+}
+
+footer a:hover {
+  color: #dc3545;
+  text-decoration: underline;
+}
+
+/* 🔹 Dropdown */
+.custom-dropdown-hover { 
+  position: relative; 
+  display: inline-block;
+}
+
+.dropdown-content-hover {
+  display: none; 
+  position: absolute; 
+  background-color: #f9f9f9; 
+  min-width: 180px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2); 
+  z-index: 1000; 
+  right: 0; 
+  top: 100%;
+  border-radius: 5px; 
+  overflow: hidden;
+}
+
+.custom-dropdown-hover:hover .dropdown-content-hover { 
+  display: block; 
+}
+
+.dropdown-content-hover a {
+  color: black; 
+  padding: 8px 12px; 
+  text-decoration: none; 
+  display: block; 
+  font-size: 0.9rem;
+}
+
+.dropdown-content-hover a:hover { 
+  background-color: #e2e6ea; 
+}
+
+.dropdown-content-hover .dropdown-divider {
+  height: 1px; 
+  margin: 0; 
+  overflow: hidden; 
+  background-color: #e9ecef;
+}

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pengumuman Dosen - PAO POLIBATAM</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/styledashboardDosen.css">
+</head>
+
+<body>
+  <div class="overlay-bg">
+    <!-- HEADER -->
+    <header class="header d-flex justify-content-between align-items-center px-4 position-relative">
+      <div>
+        <h4 class="fw-bold mb-0" id="greetingNama">Halo, ...</h4>
+        <h5 class="fw-bold" id="greetingRole">SELAMAT DATANG DI PAO-POLIBATAM</h5>
+      </div>
+
+      <div class="d-flex align-items-center gap-3 position-relative">
+        <!-- 🔔 Notifikasi -->
+        <i class="bi bi-bell fs-3 text-dark" id="notifIcon" title="Notifikasi"></i>
+        <div class="notification-popup shadow" id="notifPopup">
+          <h6 class="fw-bold mb-2">📢 Notifikasi</h6>
+          <div id="notifPopupContent">
+            <p class="text-muted small">Belum ada notifikasi.</p>
+          </div>
+        </div>
+
+        <!-- 👤 Profile Dropdown -->
+        <div class="position-relative">
+          <i class="bi bi-person-circle fs-3 text-dark" id="profileIcon" title="Profile"></i>
+          <div class="profile-dropdown shadow" id="profileDropdown">
+            <h6>Settings</h6>
+            <a href="profile.html"><i class="bi bi-person me-2"></i>Profile</a>
+            <a href="change-password.html"><i class="bi bi-key me-2"></i>Change Password</a>
+          </div>
+        </div>
+
+        <!-- 🚪 Logout -->
+        <i class="bi bi-box-arrow-right fs-3 text-dark logout-btn" title="Logout"></i>
+      </div>
+    </header>
+
+    <div class="d-flex flex-grow-1">
+      <!-- SIDEBAR -->
+      <aside class="sidebar p-3">
+        <ul class="nav flex-column">
+          <li><a class="nav-link" href="dashboard-dosen.html">Dashboard</a></li>
+          <li><a class="nav-link active" href="pengumuman-dosen.html">Pengumuman</a></li>
+          <li><a class="nav-link" href="jadwalujian-dosen.html">Jadwal Ujian</a></li>
+          <li><a class="nav-link" href="jadwalkuliah-dosen.html">Jadwal Kuliah</a></li>
+          <li><a class="nav-link" href="beasiswadosen.html">Beasiswa</a></li>
+        </ul>
+      </aside>
+
+      <!-- KONTEN -->
+      <main class="content p-4 flex-grow-1">
+        <div class="container">
+          <h3 class="fw-bold mb-3 text-primary text-center">📋 Manajemen Pengumuman</h3>
+          <button class="btn btn-primary mb-3" id="addBtn"><i class="bi bi-plus-circle"></i> Tambah Pengumuman</button>
+
+          <table class="table table-hover bg-white shadow-sm" id="announcementTable">
+            <thead class="table-primary">
+              <tr>
+                <th>ID</th>
+                <th>Judul</th>
+                <th>Deskripsi</th>
+                <th>Tanggal</th>
+                <th class="text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <footer class="footer text-center text-white py-2">
+      © 2025 Pengumuman Akademik Online - POLIBATAM |
+      <a href="#" class="text-dark text-decoration-none fw-semibold">Kebijakan Privasi</a> |
+      <a href="#" class="text-dark text-decoration-none fw-semibold">Kontak</a>
+    </footer>
+
+  <!-- MODAL -->
+  <div class="modal fade" id="modal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content p-4">
+        <h5 id="modalTitle" class="fw-bold mb-3">Tambah Pengumuman</h5>
+        <input type="text" id="titleInput" class="form-control mb-3" placeholder="Judul Pengumuman" required>
+        <textarea id="descInput" class="form-control mb-3" rows="3" placeholder="Deskripsi Pengumuman"></textarea>
+        <input type="date" id="dateInput" class="form-control mb-3">
+        <div class="text-end">
+          <button class="btn btn-secondary me-2" data-bs-dismiss="modal">Batal</button>
+          <button class="btn btn-primary" id="saveBtn">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // === LOGIN PROTECTION ===
+    const usersData = JSON.parse(localStorage.getItem("usersData")) || [];
+    const username = localStorage.getItem("username");
+    const role = localStorage.getItem("userRole");
+    const userData = usersData.find(u => u.nama === username && u.role === role);
+
+    if (!userData) {
+      alert("Silakan login terlebih dahulu!");
+      window.location.href = "login.html";
+    }
+
+    // === GREETING ===
+    document.getElementById("greetingNama").textContent = `Halo, ${userData.nama}`;
+    document.getElementById("greetingRole").textContent = `SELAMAT DATANG DI PAO-POLIBATAM (${userData.role.toUpperCase()})`;
+
+    // === LOGOUT ===
+    document.querySelector(".logout-btn").addEventListener("click", () => {
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("username");
+      localStorage.removeItem("userRole");
+      alert("Berhasil logout!");
+      window.location.href = "login.html";
+    });
+
+    // === NOTIFIKASI ===
+    const notifPopup = document.getElementById("notifPopup");
+    const notifIcon = document.getElementById("notifIcon");
+    const notifPopupContent = document.getElementById("notifPopupContent");
+
+    notifIcon.addEventListener("click", () => {
+      notifPopup.classList.toggle("show");
+      const notifText = localStorage.getItem("latestNotification") || "Belum ada notifikasi.";
+      notifPopupContent.innerHTML = `
+        <div class="mb-2">
+          <textarea id="notifInput" class="form-control form-control-sm" rows="3">${notifText}</textarea>
+        </div>
+        <button class="btn btn-sm btn-primary w-100" id="saveNotif">Simpan Notifikasi</button>
+      `;
+      document.getElementById("saveNotif").addEventListener("click", () => {
+        const newNotif = document.getElementById("notifInput").value.trim();
+        if (newNotif) {
+          localStorage.setItem("latestNotification", newNotif);
+          alert("Notifikasi berhasil diperbarui!");
+        } else {
+          alert("Teks notifikasi tidak boleh kosong!");
+        }
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!notifPopup.contains(e.target) && !notifIcon.contains(e.target))
+        notifPopup.classList.remove("show");
+    });
+
+    // === PROFILE DROPDOWN ===
+    const profileIcon = document.getElementById("profileIcon");
+    const profileDropdown = document.getElementById("profileDropdown");
+    profileIcon.addEventListener("click", () => profileDropdown.classList.toggle("show"));
+    document.addEventListener("click", (e) => {
+      if (!profileDropdown.contains(e.target) && !profileIcon.contains(e.target))
+        profileDropdown.classList.remove("show");
+    });
+
+    // === CRUD PENGUMUMAN ===
+    let editingIndex = null;
+    const tableBody = document.getElementById("tableBody");
+    const modal = new bootstrap.Modal(document.getElementById("modal"));
+
+    function loadData() {
+      const data = JSON.parse(localStorage.getItem("pengumumanDosen")) || [];
+      tableBody.innerHTML = "";
+      data.forEach((item, i) => {
+        const row = `<tr>
+          <td>${i + 1}</td>
+          <td>${item.judul}</td>
+          <td>${item.deskripsi}</td>
+          <td>${item.tanggal}</td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-outline-primary me-2" onclick="editAnnouncement(${i})"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteAnnouncement(${i})"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>`;
+        tableBody.insertAdjacentHTML("beforeend", row);
+      });
+    }
+
+    document.getElementById("addBtn").addEventListener("click", () => {
+      editingIndex = null;
+      document.getElementById("modalTitle").textContent = "Tambah Pengumuman";
+      document.getElementById("titleInput").value = "";
+      document.getElementById("descInput").value = "";
+      document.getElementById("dateInput").value = "";
+      modal.show();
+    });
+
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      const judul = document.getElementById("titleInput").value.trim();
+      const deskripsi = document.getElementById("descInput").value.trim();
+      const tanggal = document.getElementById("dateInput").value;
+      if (!judul || !deskripsi || !tanggal) return alert("Lengkapi semua field!");
+
+      const data = JSON.parse(localStorage.getItem("pengumumanDosen")) || [];
+      const newData = { judul, deskripsi, tanggal };
+      if (editingIndex !== null) data[editingIndex] = newData;
+      else data.push(newData);
+
+      localStorage.setItem("pengumumanDosen", JSON.stringify(data));
+      window.dispatchEvent(new Event("storage"));
+      modal.hide();
+      loadData();
+    });
+
+    window.editAnnouncement = (i) => {
+      const data = JSON.parse(localStorage.getItem("pengumumanDosen")) || [];
+      const item = data[i];
+      editingIndex = i;
+      document.getElementById("modalTitle").textContent = "Edit Pengumuman";
+      document.getElementById("titleInput").value = item.judul;
+      document.getElementById("descInput").value = item.deskripsi;
+      document.getElementById("dateInput").value = item.tanggal;
+      modal.show();
+    };
+
+    window.deleteAnnouncement = (i) => {
+      if (confirm("Yakin ingin menghapus pengumuman ini?")) {
+        const data = JSON.parse(localStorage.getItem("pengumumanDosen")) || [];
+        data.splice(i, 1);
+        localStorage.setItem("pengumumanDosen", JSON.stringify(data));
+        window.dispatchEvent(new Event("storage"));
+        loadData();
+      }
+    };
+
+    loadData();
+  </script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAO-POLIBATAM | Manajemen Pengumuman</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white font-sans">
+
+  <!-- Header -->
+  <header class="bg-blue-400 text-white flex justify-between items-center px-6 py-3">
+    <div>
+      <h1 class="font-semibold text-lg">Halo Nama,</h1>
+      <p class="text-sm tracking-wide">SELAMAT DATANG DI PAO-POLIBATAM</p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <button class="bg-white text-black rounded-full p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9 9 0 1118.879 6.196M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </button>
+      <button class="bg-white text-black rounded-full p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h16v16H4z" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-1/6 bg-white border-r text-sm p-4">
+      <nav class="space-y-3 mt-4">
+        <a href="#" class="block font-semibold text-blue-600">Pengumuman</a>
+        <a href="#" class="block hover:text-blue-600">Jadwal Ujian</a>
+        <a href="#" class="block hover:text-blue-600">Jadwal Kuliah</a>
+        <a href="#" class="block hover:text-blue-600">Beasiswa</a>
+        <a href="#" class="block hover:text-blue-600">Notifikasi</a>
+        <a href="#" class="block hover:text-blue-600">Profil</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 bg-gray-50 p-6">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-sm font-semibold">Manajemen Pengumuman</h2>
+        <button id="btnAdd" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
+          + Tambah Pengumuman
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="bg-white rounded shadow border border-gray-300 overflow-hidden">
+        <table class="min-w-full text-sm text-left border-collapse">
+          <thead class="bg-gray-100 border-b">
+            <tr>
+              <th class="px-4 py-2 border w-10 text-center">#</th>
+              <th class="px-4 py-2 border">Judul</th>
+              <th class="px-4 py-2 border w-32 text-center">Tanggal</th>
+              <th class="px-4 py-2 border text-center w-40">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr class="hover:bg-gray-50">
+              <td class="border px-4 py-2 text-center">1</td>
+              <td class="border px-4 py-2">Jadwal Asesmen Tengah Semester 2025</td>
+              <td class="border px-4 py-2 text-center">14/10/2025</td>
+              <td class="border px-4 py-2 text-center">
+                <button class="editBtn bg-yellow-400 hover:bg-yellow-500 text-white text-xs px-3 py-1 rounded mr-1">Edit</button>
+                <button class="deleteBtn bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded">Hapus</button>
+              </td>
+            </tr>
+            <tr class="hover:bg-gray-50">
+              <td class="border px-4 py-2 text-center">2</td>
+              <td class="border px-4 py-2">Libur Nasional</td>
+              <td class="border px-4 py-2 text-center">17/10/2025</td>
+              <td class="border px-4 py-2 text-center">
+                <button class="editBtn bg-yellow-400 hover:bg-yellow-500 text-white text-xs px-3 py-1 rounded mr-1">Edit</button>
+                <button class="deleteBtn bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded">Hapus</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer text-center text-white py-2">
+      © 2025 Pengumuman Akademik Online - POLIBATAM |
+      <a href="#" class="text-dark text-decoration-none fw-semibold">Kebijakan Privasi</a> |
+      <a href="#" class="text-dark text-decoration-none fw-semibold">Kontak</a>
+    </footer>
+    
+  <!-- Modal -->
+  <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div class="bg-white w-96 p-6 rounded-lg shadow-lg">
+      <h3 id="modalTitle" class="text-lg font-semibold mb-4">Tambah Pengumuman</h3>
+      <form id="formAnnouncement" class="space-y-3">
+        <input type="hidden" id="rowIndex">
+        <div>
+          <label class="block text-sm font-medium mb-1">Judul</label>
+          <input id="judul" type="text" class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Tanggal</label>
+          <input id="tanggal" type="date" class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none" required>
+        </div>
+        <div class="flex justify-end space-x-2 pt-3">
+          <button type="button" id="cancelBtn" class="text-gray-600 hover:text-gray-900 px-3 py-2">Batal</button>
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const btnAdd = document.getElementById("btnAdd");
+    const modal = document.getElementById("modal");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const form = document.getElementById("formAnnouncement");
+    const tableBody = document.getElementById("tableBody");
+    const modalTitle = document.getElementById("modalTitle");
+    const rowIndexInput = document.getElementById("rowIndex");
+    const judulInput = document.getElementById("judul");
+    const tanggalInput = document.getElementById("tanggal");
+
+    let editIndex = null;
+
+    // Open modal (Tambah)
+    btnAdd.addEventListener("click", () => {
+      modal.classList.remove("hidden");
+      modalTitle.textContent = "Tambah Pengumuman";
+      form.reset();
+      editIndex = null;
+    });
+
+    cancelBtn.addEventListener("click", () => {
+      modal.classList.add("hidden");
+    });
+
+    // Submit Form
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const judul = judulInput.value;
+      const tanggal = tanggalInput.value.split("-").reverse().join("/");
+
+      if (editIndex === null) {
+        const row = tableBody.insertRow();
+        const no = tableBody.rows.length;
+        row.innerHTML = `
+          <td class="border px-4 py-2 text-center">${no}</td>
+          <td class="border px-4 py-2">${judul}</td>
+          <td class="border px-4 py-2 text-center">${tanggal}</td>
+          <td class="border px-4 py-2 text-center">
+            <button class="editBtn bg-yellow-400 hover:bg-yellow-500 text-white text-xs px-3 py-1 rounded mr-1">Edit</button>
+            <button class="deleteBtn bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded">Hapus</button>
+          </td>`;
+      } else {
+        const row = tableBody.rows[editIndex];
+        row.cells[1].textContent = judul;
+        row.cells[2].textContent = tanggal;
+      }
+
+      attachEventListeners();
+      modal.classList.add("hidden");
+    });
+
+    // Tambah Event Listener Edit/Hapus
+    function attachEventListeners() {
+      document.querySelectorAll(".editBtn").forEach((btn, i) => {
+        btn.onclick = () => {
+          const row = tableBody.rows[i];
+          judulInput.value = row.cells[1].textContent;
+          const tgl = row.cells[2].textContent.split("/").reverse().join("-");
+          tanggalInput.value = tgl;
+          editIndex = i;
+          modalTitle.textContent = "Edit Pengumuman";
+          modal.classList.remove("hidden");
+        };
+      });
+
+      document.querySelectorAll(".deleteBtn").forEach((btn, i) => {
+        btn.onclick = () => {
+          if (confirm("Yakin ingin menghapus pengumuman ini?")) {
+            tableBody.deleteRow(i);
+            updateNomor();
+          }
+        };
+      });
+    }
+
+    // Update nomor urut
+    function updateNomor() {
+      Array.from(tableBody.rows).forEach((row, index) => {
+        row.cells[0].textContent = index + 1;
+      });
+    }
+
+    attachEventListeners();
+  </script>
+</body>
+</html>
