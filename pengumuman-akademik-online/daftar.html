@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Form Daftar - PAO</title>
+  <title>Formulir Daftar - PAO</title>
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,13 +15,13 @@
   <div class="container d-flex flex-column justify-content-center align-items-center min-vh-100">
     <div class="card login-card shadow-lg rounded-4 position-relative">
       <div class="card-body p-4">
-        <h3 class="text-center fw-bold mb-4">Form Pendaftaran</h3>
+        <h3 class="text-center fw-bold mb-4">Formulir Pendaftaran</h3>
 
         <form id="registerForm" class="form-section">
           <div class="form-group">
-            <label class="form-label">Role</label>
+            <label class="form-label">Sebagai</label>
             <select class="form-select rounded-pill" id="role" required>
-              <option selected disabled>Pilih Role</option>
+              <option selected disabled>Pilih Sebagai</option>
               <option value="mahasiswa">Mahasiswa</option>
               <option value="dosen">Dosen</option>
             </select>
@@ -83,8 +83,8 @@
           </div>
 
           <div class="form-group w-100">
-            <label class="form-label">Password</label>
-            <input type="password" class="form-control rounded-pill" id="password" placeholder="Masukkan password" required>
+            <label class="form-label">Kata Sandi</label>
+            <input type="password" class="form-control rounded-pill" id="Kata Sandi" placeholder="Masukkan Kata Sandi" required>
           </div>
 
           <!-- 🔹 Tombol Daftar dan Link Login -->
@@ -92,7 +92,7 @@
             <button type="submit" class="btn btn-dark rounded-pill fw-semibold px-5">Daftar</button>
             <p class="mb-0 text-dark">
               Sudah punya akun?
-              <a href="login.html" class="text-primary text-decoration-none fw-semibold">Login</a>
+              <a href="login.html" class="text-primary text-decoration-none fw-semibold">Masuk</a>
             </p>
           </div>
         </form>
@@ -159,7 +159,7 @@
                 status: document.getElementById("status").value.trim(),
                 jabatanAkademik: document.getElementById("jabatanAkademik").value.trim(),
                 jabatanStruktural: document.getElementById("jabatanStruktural").value.trim(),
-                password: document.getElementById("password").value.trim(),
+                password: document.getElementById("kata sandi").value.trim(),
               };
 
               // cek field wajib
@@ -171,7 +171,7 @@
               // 🔹 Ambil data lama dari localStorage
               const usersData = JSON.parse(localStorage.getItem("usersData")) || [];
 
-              // 🔹 Cek apakah user sudah terdaftar (nama + role)
+              // 🔹 Cek apakah user sudah terdaftar (nama + sebagai)
               const isExist = usersData.some(
                 (u) => (u.nama || "").trim() === userData.nama && (u.role || "").trim().toLowerCase() === userData.role
               );
@@ -203,3 +203,4 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
