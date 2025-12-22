@@ -3,261 +3,216 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Beasiswa Mahasiswa - PAO POLIBATAM</title>
+
+  <title>Riwayat Pengajuan Beasiswa - Mahasiswa</title>
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-  <!-- CSS Global Dashboard -->
+  <!-- DataTables (styling only) -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+  <!-- Style Dashboard -->
   <link rel="stylesheet" href="css/styledashboardMahasiswa.css">
+
+  <style>
+    .table thead th {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6c757d;
+    }
+    .btn-ajukan {
+      background-color: #2aa3dd;
+      color: white;
+      font-weight: 600;
+    }
+    .btn-ajukan:hover {
+      background-color: #238fc0;
+    }
+    /* HIDE search, entries, next/prev, info */
+    .dataTables_filter,
+    .dataTables_length,
+    .dataTables_paginate,
+    .dataTables_info {
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body>
-  <div class="overlay-bg">
-    <!-- 🔷 HEADER (SAMA SEPERTI DASHBOARD) -->
-    <header class="header d-flex justify-content-between align-items-center px-4 position-relative">
-      <div>
-        <h4 class="fw-bold mb-0" id="greetingNama">Halo, ...</h4>
-        <h5 class="fw-bold" id="greetingRole">SELAMAT DATANG DI PAO-POLIBATAM</h5>
-      </div>
+<div class="overlay-bg">
 
-      <div class="d-flex align-items-center gap-3 position-relative">
-        <!-- 🔔 Notifikasi -->
-        <i class="bi bi-bell fs-3 text-dark" id="notifIcon" title="Notifikasi"></i>
-        <div class="notification-popup shadow" id="notifPopup">
-          <h6 class="fw-bold mb-2">📢 Notifikasi</h6>
-          <div id="notifPopupContent">
-            <p class="text-muted small">Belum ada notifikasi.</p>
-          </div>
-        </div>
-
-        <!-- 👤 Profile Dropdown -->
-        <div class="position-relative">
-          <i class="bi bi-person-circle fs-3 text-dark" id="profileIcon" title="Profile"></i>
-          <div class="profile-dropdown shadow" id="profileDropdown">
-            <h6>Settings</h6>
-            <a href="profile.html"><i class="bi bi-person me-2"></i>Profile</a>
-            <a href="change-password.html"><i class="bi bi-key me-2"></i>Change Password</a>
-          </div>
-        </div>
-
-        <!-- 🚪 Logout -->
-        <i class="bi bi-box-arrow-right fs-3 text-dark logout-btn" title="Logout"></i>
-      </div>
-    </header>
-
-    <!-- 🔹 MAIN LAYOUT -->
-    <div class="d-flex flex-grow-1">
-      <!-- SIDEBAR -->
-      <aside class="sidebar p-3">
-        <ul class="nav flex-column">
-          <li class="nav-item"><a class="nav-link" href="dashboard-mahasiswa.html">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="pengumuman-mahasiswa.html">Pengumuman</a></li>
-          <li class="nav-item"><a class="nav-link" href="jadwalujian-mahasiswa.html">Jadwal Ujian</a></li>
-          <li class="nav-item"><a class="nav-link" href="jadwalkuliah-mahasiswa.html">Jadwal Kuliah</a></li>
-          <li class="nav-item"><a class="nav-link active" href="beasiswamahasiswa.html">Beasiswa</a></li>
-        </ul>
-      </aside>
-
-      <!-- KONTEN -->
-      <main class="content p-4 flex-grow-1">
-        <!-- BEASISWA TERSEDIA -->
-        <h3 class="fw-bold text-primary mb-3 text-center">🎓 BEASISWA TERSEDIA</h3>
-        <div class="table-responsive mb-5">
-          <table class="table table-bordered text-center align-middle bg-white rounded shadow-sm">
-            <thead class="table-primary">
-              <tr>
-                <th>No</th>
-                <th>Nama Beasiswa</th>
-                <th>Deskripsi</th>
-                <th>Syarat</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="tabelBeasiswa"></tbody>
-          </table>
-        </div>
-
-        <!-- BEASISWA TERDAFTAR -->
-        <h3 class="fw-bold text-primary mb-3 text-center">📄 BEASISWA TERDAFTAR</h3>
-        <div class="table-responsive">
-          <table class="table table-bordered text-center align-middle bg-white rounded shadow-sm">
-            <thead class="table-secondary">
-              <tr>
-                <th>No</th>
-                <th>Nama Beasiswa</th>
-                <th>Prodi</th>
-                <th>Status</th>
-                <th>File</th>
-              </tr>
-            </thead>
-            <tbody id="tabelTerdaftar"></tbody>
-          </table>
-        </div>
-      </main>
-    </div>
-
-    <!-- FOOTER -->
-    <footer class="footer text-center text-white py-2">
-      © 2025 Pengumuman Akademik Online - POLIBATAM |
-      <a href="#" class="text-dark text-decoration-none fw-semibold">Kebijakan Privasi</a> |
-      <a href="#" class="text-dark text-decoration-none fw-semibold">Kontak</a>
-    </footer>
+<!-- HEADER -->
+<header class="header d-flex justify-content-between align-items-center px-4">
+  <div>
+    <h4 class="fw-bold mb-0" id="greetingNama">Halo, ...</h4>
+    <h5 class="fw-bold" id="greetingRole">SELAMAT DATANG DI PAO-POLIBATAM</h5>
   </div>
 
-  <!-- MODAL PENDAFTARAN -->
-  <div class="modal fade" id="modalDaftar" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content p-4 rounded-3">
-        <h5 id="modalTitle" class="fw-bold mb-3">Form Pendaftaran Beasiswa</h5>
-        <form id="formDaftar">
-          <input type="text" id="beasiswaNama" class="form-control mb-3" readonly>
-          <input type="text" id="nama" class="form-control mb-3" placeholder="Nama Lengkap" required>
-          <input type="text" id="nim" class="form-control mb-3" placeholder="NIM" required>
-          <input type="text" id="prodi" class="form-control mb-3" placeholder="Program Studi" required>
-          <input type="file" id="file" class="form-control mb-3" required>
-          <div class="text-end">
-            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-primary">Kirim Pendaftaran</button>
-          </div>
-        </form>
+  <div class="d-flex align-items-center gap-3 position-relative">
+    <i class="bi bi-bell fs-3 text-dark" id="notifIcon"></i>
+    <div class="notification-popup shadow" id="notifPopup">
+      <h6 class="fw-bold mb-2">📢 Notifikasi</h6>
+      <p class="text-muted small">Belum ada notifikasi.</p>
+    </div>
+
+    <div class="position-relative">
+      <i class="bi bi-person-circle fs-3 text-dark" id="profileIcon"></i>
+      <div class="profile-dropdown shadow" id="profileDropdown">
+        <h6>Settings</h6>
+        <a href="profile.html"><i class="bi bi-person me-2"></i>Profile</a>
+        <a href="change-password.html"><i class="bi bi-key me-2"></i>Change Password</a>
+      </div>
+    </div>
+
+    <i class="bi bi-box-arrow-right fs-3 text-dark logout-btn"></i>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="d-flex flex-grow-1">
+
+<!-- SIDEBAR -->
+<aside class="sidebar p-3">
+  <ul class="nav flex-column">
+    <li><a class="nav-link" href="dashboard-mahasiswa.html">Dashboard</a></li>
+    <li><a class="nav-link" href="pengumuman-mahasiswa.html">Pengumuman</a></li>
+    <li><a class="nav-link" href="jadwalujian-mahasiswa.html">Jadwal Ujian</a></li>
+    <li><a class="nav-link" href="jadwalkuliah-mahasiswa.html">Jadwal Kuliah</a></li>
+    <li><a class="nav-link active" href="beasiswamahasiswa.html">Beasiswa</a></li>
+  </ul>
+</aside>
+
+<!-- KONTEN -->
+<main class="content p-4 w-100">
+
+  <h2 class="text-center fw-bold mb-4">PENGAJUAN BEASISWA</h2>
+
+<button
+  class="btn btn-ajukan px-4 mb-4"
+  data-bs-toggle="modal"
+  data-bs-target="#modalDaftar">
+  <i class="bi bi-pencil-square me-2"></i> AJUKAN BEASISWA
+</button>
+
+
+  <!-- TABEL -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h6 class="card-title">Riwayat Pengajuan</h6>
+      <div class="table-responsive">
+        <table id="tabelPengajuan" class="table table-striped table-bordered align-middle" style="width:100%">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Waktu</th>
+              <th>Beasiswa</th>
+              <th>Jenis</th>
+              <th>Rekening</th>
+              <th>Jumlah Berkas</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="bodyPengajuan"></tbody>
+        </table>
       </div>
     </div>
   </div>
 
-  <!-- SCRIPT -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // === LOGIN PROTECTION ===
-    const usersData = JSON.parse(localStorage.getItem("usersData")) || [];
-    const username = localStorage.getItem("username");
-    const role = localStorage.getItem("userRole");
-    const userData = usersData.find(u => u.nama === username && u.role === role);
+</main>
+</div>
 
-    if (!userData) {
-      alert("Silakan login terlebih dahulu!");
-      window.location.href = "login.html";
-    }
+<!-- FOOTER -->
+<footer class="footer text-center text-white py-2">
+  © 2025 Pengumuman Akademik Online - POLIBATAM |
+  <a href="#" class="text-dark">Kebijakan Privasi</a> |
+  <a href="#" class="text-dark">Kontak</a>
+</footer>
+</div>
 
-    // 🔹 Greeting
-    document.getElementById("greetingNama").textContent = `Halo, ${userData.nama}`;
-    document.getElementById("greetingRole").textContent = `SELAMAT DATANG DI PAO-POLIBATAM (${userData.role.toUpperCase()})`;
+<!-- MODAL AJUKAN -->
+<div class="modal fade" id="modalDaftar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content p-4">
 
-    // === LOGOUT ===
-    document.querySelector(".logout-btn").addEventListener("click", () => {
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("username");
-      localStorage.removeItem("userRole");
-      alert("Berhasil logout!");
-      window.location.href = "login.html";
-    });
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">Form Pengajuan Beasiswa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
 
-    // === NOTIFIKASI ===
-    const notifPopup = document.getElementById("notifPopup");
-    const notifIcon = document.getElementById("notifIcon");
-    notifIcon.addEventListener("click", () => notifPopup.classList.toggle("show"));
-    document.addEventListener("click", (e) => {
-      if (!notifPopup.contains(e.target) && !notifIcon.contains(e.target))
-        notifPopup.classList.remove("show");
-    });
+      <form id="formDaftar" novalidate>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Nama Mahasiswa *</label>
+            <input id="namaMhs" class="form-control" required />
+          </div>
 
-    // === PROFILE DROPDOWN ===
-    const profileIcon = document.getElementById("profileIcon");
-    const profileDropdown = document.getElementById("profileDropdown");
-    profileIcon.addEventListener("click", () => profileDropdown.classList.toggle("show"));
-    document.addEventListener("click", (e) => {
-      if (!profileDropdown.contains(e.target) && !profileIcon.contains(e.target))
-        profileDropdown.classList.remove("show");
-    });
+          <div class="col-md-3">
+            <label class="form-label">NIM *</label>
+            <input id="nimMhs" class="form-control" required />
+          </div>
 
-    // === BEASISWA DATA ===
-    if (!localStorage.getItem("beasiswaData")) {
-      const contoh = [
-        { nama: "Beasiswa Akademik", deskripsi: "Untuk mahasiswa berprestasi akademik", syarat: "KHS dan Surat Aktif" },
-        { nama: "Beasiswa Non-Akademik", deskripsi: "Untuk prestasi di bidang non-akademik", syarat: "Piagam dan Surat Aktif" }
-      ];
-      localStorage.setItem("beasiswaData", JSON.stringify(contoh));
-    }
+          <div class="col-md-3">
+            <label class="form-label">Program Studi</label>
+            <input id="prodiMhs" class="form-control" />
+          </div>
 
-    const beasiswaData = JSON.parse(localStorage.getItem("beasiswaData")) || [];
-    const pendaftarData = JSON.parse(localStorage.getItem("pendaftarBeasiswa")) || [];
-    const tabelBeasiswa = document.getElementById("tabelBeasiswa");
-    const tabelTerdaftar = document.getElementById("tabelTerdaftar");
-    const modal = new bootstrap.Modal(document.getElementById("modalDaftar"));
+          <div class="col-md-6">
+            <label class="form-label">Pilih Beasiswa *</label>
+            <select id="pilihBeasiswa" class="form-select" required></select>
+          </div>
 
-    // Load tabel beasiswa
-    function loadBeasiswa() {
-      tabelBeasiswa.innerHTML = "";
-      beasiswaData.forEach((b, i) => {
-        tabelBeasiswa.innerHTML += `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${b.nama}</td>
-            <td>${b.deskripsi}</td>
-            <td>${b.syarat}</td>
-            <td><button class="btn btn-primary btn-sm rounded-pill" onclick="bukaModal('${b.nama}')">Daftar</button></td>
-          </tr>`;
-      });
-    }
+          <div class="col-md-6">
+            <label class="form-label">Nomor Rekening *</label>
+            <input id="rekening" class="form-control" required />
+          </div>
 
-    function bukaModal(namaBeasiswa) {
-      document.getElementById("beasiswaNama").value = namaBeasiswa;
-      document.getElementById("formDaftar").reset();
-      modal.show();
-    }
+          <div class="col-12">
+            <div id="infoJumlahBerkas" class="mb-2"></div>
+            <div id="dynamicBerkasArea"></div>
+          </div>
 
-    document.getElementById("formDaftar").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const namaBeasiswa = document.getElementById("beasiswaNama").value;
-      const nama = document.getElementById("nama").value.trim();
-      const nim = document.getElementById("nim").value.trim();
-      const prodi = document.getElementById("prodi").value.trim();
-      const file = document.getElementById("file").files[0]?.name || "-";
+          <div class="col-12 text-end mt-3">
+            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary">Kirim Pengajuan</button>
+          </div>
 
-      if (!nama || !nim || !prodi || file === "-") {
-        alert("Semua kolom wajib diisi!");
-        return;
-      }
+        </div>
+      </form>
 
-      pendaftarData.push({ beasiswa: namaBeasiswa, nama, nim, prodi, file, status: "Menunggu" });
-      localStorage.setItem("pendaftarBeasiswa", JSON.stringify(pendaftarData));
-      modal.hide();
-      alert("Pendaftaran berhasil dikirim!");
-      loadTerdaftar();
-    });
+    </div>
+  </div>
+</div>
 
-    function loadTerdaftar() {
-      const semuaPendaftar = JSON.parse(localStorage.getItem("pendaftarBeasiswa")) || [];
-      const milikUser = semuaPendaftar.filter(p => p.nama === userData.nama);
-      tabelTerdaftar.innerHTML = "";
+<!-- MODAL DETAIL -->
+<div class="modal fade" id="modalDetail" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content p-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <h5 class="mb-0">Detail Pengajuan</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <hr>
+      <div id="detailContent" style="max-height:60vh; overflow:auto;"></div>
+      <div class="text-end mt-3">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-      if (milikUser.length === 0) {
-        tabelTerdaftar.innerHTML = `<tr><td colspan="5" class="text-muted">Belum ada pendaftaran.</td></tr>`;
-        return;
-      }
+<!-- SCRIPTS -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-      milikUser.forEach((p, i) => {
-        tabelTerdaftar.innerHTML += `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${p.beasiswa}</td>
-            <td>${p.prodi}</td>
-            <td class="${p.status === 'Diterima' ? 'text-success' : p.status === 'Ditolak' ? 'text-danger' : 'text-warning'} fw-semibold">${p.status}</td>
-            <td>${p.file}</td>
-          </tr>`;
-      });
-    }
-    document.addEventListener("DOMContentLoaded", () => {
-      loadBeasiswa();
-      loadTerdaftar();
-    });
-    // === AUTO UPDATE DARI DOSEN ===
-    window.addEventListener("storage", () => {
-      loadBeasiswa();
-      loadTerdaftar();
-    });
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
-  </script>
+<script src="js/beasiswa-mahasiswa.js"></script>
+
 </body>
 </html>
