@@ -1,12 +1,12 @@
 /* 🌄 Background */
-body {
+bbody {
   background: url('../assets/images/polibatam.jpg') center/cover no-repeat;
   font-family: 'Poppins', sans-serif;
   color: #333;
   margin: 0;
 }
 
-/* 💠 Kotak login */
+/* 💠 Kotak login   */
 .login-card {
   background-color: rgba(125, 181, 243, 0.95);
   width: 380px;

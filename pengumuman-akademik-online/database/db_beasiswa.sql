@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 22, 2025 at 05:24 AM
+-- Generation Time: Dec 26, 2025 at 12:54 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -113,6 +113,21 @@ CREATE TABLE `pengajuan_berkas` (
   `uploaded_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('admin','user') NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -160,6 +175,12 @@ ALTER TABLE `pengajuan_berkas`
   ADD KEY `pengajuan_id` (`pengajuan_id`);
 
 --
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -197,6 +218,12 @@ ALTER TABLE `pengajuan`
 -- AUTO_INCREMENT for table `pengajuan_berkas`
 --
 ALTER TABLE `pengajuan_berkas`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
