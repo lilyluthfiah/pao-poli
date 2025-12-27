@@ -28,7 +28,7 @@ if ($result && mysqli_num_rows($result) === 1) {
     if ($user['role'] === "dosen") {
       header("Location: dashboard-dosen.php");
     } else {
-      header("Location: ../dashboard-mahasiswa.php");
+      header("Location: dashboard-mahasiswa.php");
     }
     exit;
   }
