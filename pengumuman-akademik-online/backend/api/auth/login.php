@@ -2,7 +2,13 @@
 session_start();
 require "../../config/db.php";
 
-header("Content-Type: application/json; charset=utf-8");
+if ($user['role'] === 'dosen') {
+  header("Location: ../dashboard-dosen.php");
+  exit;
+} else {
+  header("Location: ../dashboard-mahasiswa.html");
+  exit;
+}
 
 $username = trim($_POST['username'] ?? '');
 $password = $_POST['password'] ?? '';
