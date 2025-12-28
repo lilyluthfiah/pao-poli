@@ -11,7 +11,7 @@ body {
 
 .overlay-bg {
   background-color: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(4x);
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -19,7 +19,7 @@ body {
 
 /* 🔷 Header */
 .header {
-  background-color: #a9a28c;
+  background-color: #71b6f9;
   border-bottom: 1px solid #dee2e6;
   padding: 15px 20px;
   color: #fff;
@@ -47,7 +47,7 @@ body {
 
 .sidebar .nav-link.active,
 .sidebar .nav-link:hover {
-  background-color: #a9a28c;
+  background-color: #007bff;
   color: #fff !important;
 }
 
@@ -73,7 +73,7 @@ body {
 }
 
 .hero-box .btn-primary {
-  background-color: #a9a28c;
+  background-color: #0056d2;
   border: none;
   font-weight: 600;
   transition: 0.3s;
@@ -103,7 +103,7 @@ body {
 
 /* 🦶 Footer */
 .footer {
-  background-color: #a9a28c;
+  background-color: #71b6f9;
   color: #000;
   font-weight: 500;
   padding: 10px 0;
@@ -173,6 +173,4 @@ body {
   from {opacity: 0; transform: translateY(-5px);}
   to {opacity: 1; transform: translateY(0);}
 }
-
-
 

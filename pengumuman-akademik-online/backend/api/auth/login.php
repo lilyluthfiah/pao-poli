@@ -3,7 +3,7 @@ session_start();
 require "../../config/db.php";
 
 if ($user['role'] === 'dosen') {
-  header("Location: ../dashboard-dosen.php");
+  header("Location: /admin/page/dashboard-dosen.html");
   exit;
 } else {
   header("Location: ../dashboard-mahasiswa.html");
