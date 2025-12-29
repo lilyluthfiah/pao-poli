@@ -1,6 +1,6 @@
 /* 🌄 Background */
 body {
-  background: url('images/polibatam.jpg') center/cover no-repeat;
+  background: url('./images/polibatam.jpg') center/cover no-repeat;
   font-family: 'Poppins', sans-serif;
   color: #333;
   margin: 0;
@@ -34,11 +34,61 @@ body {
   border-radius: 20px;
 }
 
+/* 🔑 Password field + icon mata di dalam input */
+.pw-field {
+  position: relative;
+}
+
+.pw-field .form-control {
+  padding-right: 52px; /* ruang untuk icon mata */
+}
+
+.pw-toggle {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  font-size: 18px;
+  color: #0d3b66;
+  opacity: 0.9;
+}
+
+.pw-toggle:hover {
+  opacity: 1;
+}
+
+/* ✅ supaya icon tidak "geser" saat fokus */
+.pw-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* ☑️ Remember Me */
+.remember-wrap {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  color: #0d3b66;
+}
+
+.remember-wrap input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #0d3b66; /* modern browser */
+}
+
 /* 🔘 Tombol */
 .btn-dark {
   background-color: #0d3b66;
   border: none;
-  transition: transform .15s ease, background-color .15s ease;
+  transition: transform 0.15s ease, background-color 0.15s ease;
 }
 
 .btn-dark:hover {
@@ -51,4 +101,15 @@ body {
   background-color: #0d3b66;
   width: 100%;
   color: white;
+}
+
+/* Link di footer */
+.footer a {
+  color: #fff;
+  opacity: 0.95;
+}
+
+.footer a:hover {
+  opacity: 1;
+  text-decoration: underline;
 }

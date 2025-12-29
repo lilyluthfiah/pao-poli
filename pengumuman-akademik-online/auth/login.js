@@ -1,55 +1,97 @@
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("MasukForm").addEventListener("submit", async function (e) {
+window.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("#loginForm");
+  const usernameEl = document.querySelector("#username");
+  const passwordEl = document.querySelector("#password");
+  const roleEl = document.querySelector("#role");
+  const alertBox = document.querySelector("#alertBox");
+
+  const rememberEl = document.querySelector("#rememberMe");
+  const toggleBtn = document.querySelector("#togglePassword");
+  const toggleIcon = toggleBtn?.querySelector("i");
+
+  if (!form || !usernameEl || !passwordEl || !roleEl) return;
+
+  // ====== load remember me ======
+  const saved = localStorage.getItem("pao_login_remember");
+  if (saved) {
+    try {
+      const obj = JSON.parse(saved);
+      if (obj.username) usernameEl.value = obj.username;
+      if (obj.role) roleEl.value = obj.role; // admin/mahasiswa
+      if (rememberEl) rememberEl.checked = true;
+    } catch {}
+  }
+
+  // ====== toggle password ======
+  if (toggleBtn && passwordEl) {
+    toggleBtn.addEventListener("click", () => {
+      const hidden = passwordEl.type === "password";
+      passwordEl.type = hidden ? "text" : "password";
+      if (toggleIcon) {
+        toggleIcon.className = hidden ? "bi bi-eye-slash" : "bi bi-eye";
+      }
+      toggleBtn.title = hidden ? "Sembunyikan password" : "Tampilkan password";
+      toggleBtn.setAttribute("aria-label", toggleBtn.title);
+    });
+  }
+
+  function show(msg) {
+    if (!alertBox) return;
+    alertBox.textContent = msg;
+    alertBox.classList.remove("d-none");
+    alertBox.classList.add("alert-danger");
+  }
+
+  function hide() {
+    if (!alertBox) return;
+    alertBox.textContent = "";
+    alertBox.classList.add("d-none");
+    alertBox.classList.remove("alert-danger");
+  }
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    hide();
 
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const role = document.getElementById("role").value;
+    const username = usernameEl.value.trim();
+    const password = passwordEl.value;
+    const role = (roleEl.value || "").trim().toLowerCase();
 
-    if (!role || role === "Pilih") {
-      alert("Silakan pilih role terlebih dahulu (Mahasiswa atau Dosen).");
+    if (!username || !password || !role) {
+      show("Username, password, dan role wajib diisi.");
       return;
     }
-    if (username === "" || password === "") {
-      alert("Nama dan password wajib diisi!");
-      return;
+
+    // ====== save remember me (username+role saja, tidak simpan password) ======
+    if (rememberEl?.checked) {
+      localStorage.setItem("pao_login_remember", JSON.stringify({ username, role }));
+    } else {
+      localStorage.removeItem("pao_login_remember");
     }
 
     try {
-      const formData = new FormData();
-      formData.append("username", username);
-      formData.append("password", password);
-      formData.append("role", role);
-      formData.append("login", "1");
-
-      // ✅ dari auth/login.html ke backend/auth/login.php
-      const res = await fetch("../backend/auth/login.php", {
+      const res = await fetch("../backend/api/auth/login.php", {
         method: "POST",
-        body: formData
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username, password, role })
       });
 
       const data = await res.json();
 
-      if (!res.ok) {
-        alert(data.message || "Login gagal");
+      if (!data.success) {
+        show(data.message || "Login gagal.");
         return;
       }
 
-      // ✅ simpan untuk halaman HTML yang masih pakai localStorage
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("username", data.username);
-      localStorage.setItem("userRole", data.role);
-
-      // ✅ redirect sesuai role
-      if (data.role === "dosen") {
-        window.location.href = "../dashboard-dosen.php"; // sesuaikan kalau dashboard ada di folder lain
+      if ((data.role || "").toLowerCase() === "admin") {
+        window.location.href = "../admin/dashboard.php";
       } else {
-        window.location.href = "../dashboard-mahasiswa.html"; // sesuaikan juga
+        window.location.href = "../mahasiswa/dashboard.php";
       }
-
     } catch (err) {
       console.error(err);
-      alert("Terjadi error. Cek Console (F12) dan Network.");
+      show("Gagal terhubung ke server.");
     }
   });
 });
