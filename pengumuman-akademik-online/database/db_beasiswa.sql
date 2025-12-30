@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 26, 2025 at 12:54 PM
+-- Generation Time: Dec 30, 2025 at 11:15 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -73,6 +73,31 @@ CREATE TABLE `beasiswa_persyaratan` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `jadwal_kuliah`
+--
+
+CREATE TABLE `jadwal_kuliah` (
+  `id` int NOT NULL,
+  `tanggal` date NOT NULL,
+  `mata_kuliah` varchar(100) NOT NULL,
+  `ruang` varchar(50) NOT NULL,
+  `waktu` varchar(50) NOT NULL,
+  `dosen` varchar(100) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `jadwal_kuliah`
+--
+
+INSERT INTO `jadwal_kuliah` (`id`, `tanggal`, `mata_kuliah`, `ruang`, `waktu`, `dosen`, `created_at`) VALUES
+(1, '2025-12-30', 'Dasar Pemrograman ', 'GU-706', '13.40 - 17.00', 'nur ', '2025-12-26 00:01:46'),
+(2, '2025-09-29', 'PTI', 'GU-702', '08.40 - 12.00', 'kevin', '2025-12-26 00:01:46'),
+(5, '2025-12-31', 'Sistem Komputer', 'TA 10.4', '13.40 - 17.00', 'nizan', '2025-12-26 03:32:58');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `mahasiswa`
 --
 
@@ -129,6 +154,13 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `password`, `role`, `is_active`, `created_at`) VALUES
+(7, 'Zaskia Deya Ramadhani', '$2y$10$PLFiZPjW17HNS7tUgTNipO3l/Xst5UoLeXcwbpOfCUIkMSi/WcMSq', 'admin', 1, '2025-12-30 08:20:52');
+
+--
 -- Indexes for dumped tables
 --
 
@@ -151,6 +183,12 @@ ALTER TABLE `beasiswa_berkas`
 ALTER TABLE `beasiswa_persyaratan`
   ADD PRIMARY KEY (`id`),
   ADD KEY `beasiswa_id` (`beasiswa_id`);
+
+--
+-- Indexes for table `jadwal_kuliah`
+--
+ALTER TABLE `jadwal_kuliah`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `mahasiswa`
@@ -178,7 +216,8 @@ ALTER TABLE `pengajuan_berkas`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_username` (`username`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -203,6 +242,12 @@ ALTER TABLE `beasiswa_persyaratan`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `jadwal_kuliah`
+--
+ALTER TABLE `jadwal_kuliah`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `mahasiswa`
 --
 ALTER TABLE `mahasiswa`
@@ -224,7 +269,7 @@ ALTER TABLE `pengajuan_berkas`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
