@@ -1,4 +1,8 @@
 window.addEventListener("DOMContentLoaded", () => {
+  // ====== SET BASE PATH PROJECT (WAJIB) ======
+  // Sesuaikan dengan URL project kamu (lihat address bar)
+  const BASE = "/pao-poli/pengumuman-akademik-online";
+
   const form = document.querySelector("#loginForm");
   const usernameEl = document.querySelector("#username");
   const passwordEl = document.querySelector("#password");
@@ -7,9 +11,24 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const rememberEl = document.querySelector("#rememberMe");
   const toggleBtn = document.querySelector("#togglePassword");
-  const toggleIcon = toggleBtn?.querySelector("i");
+  const toggleIcon = toggleBtn ? toggleBtn.querySelector("i") : null;
 
   if (!form || !usernameEl || !passwordEl || !roleEl) return;
+
+  // ====== helper alert ======
+  function show(msg, type = "danger") {
+    if (!alertBox) return;
+    alertBox.textContent = msg;
+    alertBox.classList.remove("d-none", "alert-danger", "alert-success", "alert-warning");
+    alertBox.classList.add(`alert-${type}`);
+  }
+
+  function hide() {
+    if (!alertBox) return;
+    alertBox.textContent = "";
+    alertBox.classList.add("d-none");
+    alertBox.classList.remove("alert-danger", "alert-success", "alert-warning");
+  }
 
   // ====== load remember me ======
   const saved = localStorage.getItem("pao_login_remember");
@@ -27,42 +46,27 @@ window.addEventListener("DOMContentLoaded", () => {
     toggleBtn.addEventListener("click", () => {
       const hidden = passwordEl.type === "password";
       passwordEl.type = hidden ? "text" : "password";
-      if (toggleIcon) {
-        toggleIcon.className = hidden ? "bi bi-eye-slash" : "bi bi-eye";
-      }
+      if (toggleIcon) toggleIcon.className = hidden ? "bi bi-eye-slash" : "bi bi-eye";
       toggleBtn.title = hidden ? "Sembunyikan password" : "Tampilkan password";
       toggleBtn.setAttribute("aria-label", toggleBtn.title);
     });
   }
 
-  function show(msg) {
-    if (!alertBox) return;
-    alertBox.textContent = msg;
-    alertBox.classList.remove("d-none");
-    alertBox.classList.add("alert-danger");
-  }
-
-  function hide() {
-    if (!alertBox) return;
-    alertBox.textContent = "";
-    alertBox.classList.add("d-none");
-    alertBox.classList.remove("alert-danger");
-  }
-
+  // ====== submit login ======
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     hide();
 
     const username = usernameEl.value.trim();
     const password = passwordEl.value;
-    const role = (roleEl.value || "").trim().toLowerCase();
+    const role = (roleEl.value || "").trim().toLowerCase(); // admin/mahasiswa
 
     if (!username || !password || !role) {
-      show("Username, password, dan role wajib diisi.");
+      show("Username, password, dan role wajib diisi.", "warning");
       return;
     }
 
-    // ====== save remember me (username+role saja, tidak simpan password) ======
+    // remember me: simpan username + role (tanpa password)
     if (rememberEl?.checked) {
       localStorage.setItem("pao_login_remember", JSON.stringify({ username, role }));
     } else {
@@ -70,28 +74,32 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      const res = await fetch("../backend/api/auth/login.php", {
+      const res = await fetch(`${BASE}/backend/api/auth/login.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ username, password, role })
       });
 
-      const data = await res.json();
+      // kalau server balas bukan JSON, biar ketahuan
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); }
+      catch { throw new Error("Response bukan JSON: " + text); }
 
       if (!data.success) {
-        show(data.message || "Login gagal.");
+        show(data.message || "Login gagal.", "danger");
         return;
       }
-
+      const BASE = "/pao-poli/pengumuman-akademik-online";
       if ((data.role || "").toLowerCase() === "admin") {
-        window.location.href = "../admin/dashboard.php";
+          window.location.href = `${BASE}/admin/page/dashboard-dosen.html`;
       } else {
-        window.location.href = "../mahasiswa/dashboard.php";
+        window.location.href = `${BASE}/mahasiswa/page/dashboard-mahasiswa.html`;
       }
     } catch (err) {
       console.error(err);
-      show("Gagal terhubung ke server.");
+      show("Gagal terhubung ke server.", "danger");
     }
   });
 });
