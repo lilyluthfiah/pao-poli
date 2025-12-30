@@ -1,36 +1,26 @@
 <?php
-// backend/helpers/response.php
-header("Content-Type: application/json; charset=utf-8");
+declare(strict_types=1);
 
-function json_ok($data = null, string $message = "OK", int $code = 200): void {
-  http_response_code($code);
-  echo json_encode([
-    "status"  => "success",
-    "message" => $message,
-    "data"    => $data
-  ], JSON_UNESCAPED_UNICODE);
-  exit;
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();
 }
 
-function json_fail(string $message = "Error", int $code = 400, $data = null): void {
-  http_response_code($code);
-  echo json_encode([
-    "status"  => "error",
-    "message" => $message,
-    "data"    => $data
-  ], JSON_UNESCAPED_UNICODE);
-  exit;
-}
-
-function read_json_body(): array {
+function jsonInput(): array {
   $raw = file_get_contents("php://input");
   $data = json_decode($raw, true);
   return is_array($data) ? $data : [];
 }
 
-function jsonResponse($data, int $code = 200) {
+function success(array $payload = [], int $code = 200): void {
   http_response_code($code);
   header("Content-Type: application/json; charset=utf-8");
-  echo json_encode($data, JSON_UNESCAPED_UNICODE);
+  echo json_encode(array_merge(["success" => true], $payload), JSON_UNESCAPED_UNICODE);
+  exit;
+}
+
+function error(string $message, int $code = 400, array $extra = []): void {
+  http_response_code($code);
+  header("Content-Type: application/json; charset=utf-8");
+  echo json_encode(array_merge(["success" => false, "message" => $message], $extra), JSON_UNESCAPED_UNICODE);
   exit;
 }

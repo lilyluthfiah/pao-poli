@@ -1,15 +1,19 @@
 <?php
 session_start();
-header("Content-Type: application/json");
+require_once __DIR__ . "/../../helpers/response.php";
 
-if (!isset($_SESSION['user'])) {
-  echo json_encode(["loggedIn" => false]);
-  exit;
+if (empty($_SESSION["user_id"])) {
+  error("Unauthorized", 401);
 }
 
-echo json_encode([
+$roleRaw = (string)($_SESSION["role"] ?? ""); // admin / user
+$roleForFrontend = ($roleRaw === "user") ? "mahasiswa" : $roleRaw;
+
+success([
   "loggedIn" => true,
-  "id" => $_SESSION['user']['id'],
-  "username" => $_SESSION['user']['username'],
-  "role" => $_SESSION['user']['role']
+  "user" => [
+    "id" => (int)$_SESSION["user_id"],
+    "username" => (string)($_SESSION["username"] ?? ""),
+    "role" => $roleForFrontend
+  ]
 ]);
