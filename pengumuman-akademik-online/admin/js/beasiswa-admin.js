@@ -1,4 +1,4 @@
-console.log("✅ beasiswa-admin.js loaded");
+
 
 const ENDPOINT_SIMPAN = "../backend/dosen/simpan_beasiswa.php";
 

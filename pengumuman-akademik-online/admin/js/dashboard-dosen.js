@@ -1,4 +1,3 @@
-console.log("✅ dashboard-dosen.js LOADED");
 // ===============================
 // AMBIL USER DARI SESSION (me.php) + GREETING
 // ===============================
@@ -20,7 +19,7 @@ async function initGreetingFromSession() {
     // Greeting
     document.getElementById("greetingNama").textContent = `Halo, ${username}`;
     document.getElementById("greetingRole").textContent =
-      `SELAMAT DATANG DI PAO-POLIBATAM (${String(role).toUpperCase()})`;
+      `SELAMAT DATANG DI PAO-POLIBATAM`;
 
     // (Opsional) kalau dashboard ini khusus admin/dosen, aktifkan cek akses:
     // if (role !== "admin" && role !== "dosen") {
