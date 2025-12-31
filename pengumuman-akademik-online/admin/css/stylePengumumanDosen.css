@@ -179,3 +179,45 @@ body {
   to {opacity: 1; transform: translateY(0);}
 }
 
+/* ==========================================================
+   FIX TAMBAHAN: tombol tidak bisa diklik karena ketimpa layer
+   Tempel/biarkan bagian ini di paling bawah
+========================================================== */
+
+/* Pastikan area konten berada di atas background overlay */
+.overlay-bg,
+.header,
+.sidebar,
+.content,
+.container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Kalau nanti kamu pakai pseudo-element overlay, jangan tangkap klik */
+.overlay-bg::before,
+.overlay-bg::after {
+  pointer-events: none !important;
+}
+
+/* Tombol Tambah Pengumuman wajib paling atas */
+#addBtn {
+  position: relative;
+  z-index: 9999;
+  pointer-events: auto !important;
+}
+
+/* Tabel tidak boleh menutupi tombol */
+#announcementTable,
+#announcementTable thead,
+#announcementTable tbody,
+#announcementTable tr,
+#announcementTable th,
+#announcementTable td {
+  position: relative;
+  z-index: 2;
+}
+
+/* Modal selalu di atas */
+.modal { z-index: 1055; }
+.modal-backdrop { z-index: 1050; }
