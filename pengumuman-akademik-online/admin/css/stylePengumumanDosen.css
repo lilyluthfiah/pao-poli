@@ -23,11 +23,16 @@ body {
   border-bottom: 1px solid #dee2e6;
   padding: 15px 20px;
   color: #fff;
+  
+  display: flex;               /* TAMBAHAN */
+  justify-content: center;     /* TENGAH HORIZONTAL */
+  align-items: center;   
 }
 
 .header h4 {
   font-weight: 600;
-  color: #000;
+  color: #000000;   /* HITAM */
+  margin: 0;
 }
 
 /* 🔹 Sidebar */
