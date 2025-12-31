@@ -1,21 +1,39 @@
+alert("GUARD ADMIN KELOAD ✅");
+
 const BASE = "/pao-poli/pengumuman-akademik-online";
 
-(async () => {
+(async function () {
+  // pastikan DOM sudah siap (kalau defer sudah dipakai, ini makin aman)
+  if (document.readyState === "loading") {
+    await new Promise((r) => document.addEventListener("DOMContentLoaded", r, { once: true }));
+  }
+
   try {
-    const res = await fetch(`${BASE}/backend/api/auth/me.php`, {
-      credentials: "include"
-    });
+    const res = await fetch(`${BASE}/backend/api/auth/me.php`, { credentials: "include" });
+    const json = await res.json();
 
-    if (!res.ok) throw new Error("unauthorized");
-    const data = await res.json();
+    console.log("GUARD me.php:", res.status, json);
 
-    if (!data.success) throw new Error("unauthorized");
+    if (!res.ok || !json.success) throw new Error("unauthorized");
 
-    // role dari backend: admin / user
-    if ((data.user?.role || "").toLowerCase() !== "admin") {
+    const username = json.user?.username || "";
+    const role = (json.user?.role || "").toLowerCase();
+
+    if (role !== "admin") {
       window.location.href = `${BASE}/auth/login.html`;
+      return;
     }
+
+    const namaEl = document.getElementById("greetingNama");
+    const roleEl = document.getElementById("greetingRole");
+
+    console.log("EL:", namaEl, roleEl);
+
+    if (namaEl) namaEl.textContent = `Halo, ${username}`;
+    if (roleEl) roleEl.textContent = `SELAMAT DATANG DI PAO-POLIBATAM` ;
+
   } catch (e) {
+    console.error("GUARD ERROR:", e);
     window.location.href = `${BASE}/auth/login.html`;
   }
 })();

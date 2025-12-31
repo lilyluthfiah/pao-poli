@@ -1,9 +1,18 @@
 <?php
 declare(strict_types=1);
 
+// WAJIB: agar session cookie berlaku untuk semua halaman di project subfolder ini
+session_set_cookie_params([
+  "path" => "/pao-poli/pengumuman-akademik-online/",
+  "httponly" => true,
+  "samesite" => "Lax",
+]);
+
 session_start();
+
 require_once __DIR__ . "/../../config/database.php";
 require_once __DIR__ . "/../../helpers/response.php";
+
 
 if (($_SERVER["REQUEST_METHOD"] ?? "") !== "POST") {
   error("Method not allowed", 405);
