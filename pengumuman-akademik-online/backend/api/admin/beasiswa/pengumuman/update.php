@@ -1,28 +1,32 @@
 <?php
-require_once __DIR__ . "/../../../config/database.php";
-header("Content-Type: application/json; charset=utf-8");
-if (session_status() === PHP_SESSION_NONE) session_start();
+require_once __DIR__ . "/../../../../config/database.php";
+require_once __DIR__ . "/../../../../helpers/response.php";
 
-$role = strtolower((string)($_SESSION["user"]["role"] ?? $_SESSION["role"] ?? ""));
-if ($role !== "admin" && $role !== "dosen") {
-  http_response_code(401);
-  echo json_encode(["success"=>false,"message"=>"Unauthorized"]);
-  exit;
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+  error("Method not allowed", 405);
 }
 
-$data = json_decode(file_get_contents("php://input"), true) ?: [];
+$data = jsonInput();
+
 $id = (int)($data["id"] ?? 0);
-$judul = trim((string)($data["judul"] ?? ""));
-$deskripsi = trim((string)($data["deskripsi"] ?? ""));
+$judul = trim($data["judul"] ?? "");
+$deskripsi = trim($data["deskripsi"] ?? "");
 
-if ($id <= 0 || $judul === "" || $deskripsi === "") {
-  http_response_code(422);
-  echo json_encode(["success"=>false,"message"=>"Data tidak valid"]);
-  exit;
+if ($id <= 0) error("ID tidak valid.", 422);
+if ($judul === "" || $deskripsi === "") {
+  error("Judul dan deskripsi wajib diisi.", 422);
 }
 
-$stmt = $conn->prepare("UPDATE pengumuman SET judul=?, deskripsi=? WHERE id=?");
-$stmt->bind_param("ssi", $judul, $deskripsi, $id);
-$stmt->execute();
+try {
+  $stmt = $conn->prepare(
+    "UPDATE pengumuman
+     SET judul = ?, deskripsi = ?
+     WHERE id = ?"
+  );
+  $stmt->bind_param("ssi", $judul, $deskripsi, $id);
+  $stmt->execute();
 
-echo json_encode(["success"=>true]);
+  success([], "Pengumuman berhasil diperbarui");
+} catch (Throwable $e) {
+  error("Gagal update pengumuman: " . $e->getMessage(), 500);
+}
