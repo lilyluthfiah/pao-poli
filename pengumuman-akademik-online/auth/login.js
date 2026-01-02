@@ -91,11 +91,10 @@ window.addEventListener("DOMContentLoaded", () => {
         show(data.message || "Login gagal.", "danger");
         return;
       }
-      const BASE = "/pao-poli/pengumuman-akademik-online";
       if ((data.role || "").toLowerCase() === "admin") {
           window.location.href = `${BASE}/admin/page/dashboard-dosen.html`;
       } else {
-        window.location.href = `${BASE}/mahasiswa/page/dashboard-mahasiswa.html`;
+        window.location.href = `${BASE}/mahasiswa/pages/dashboard-mahasiswa.html`;
       }
     } catch (err) {
       console.error(err);
