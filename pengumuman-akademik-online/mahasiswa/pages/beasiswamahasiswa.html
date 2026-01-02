@@ -143,50 +143,108 @@
         <h5 class="mb-0">Form Pengajuan Beasiswa</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-
-      <form id="formDaftar" novalidate>
+      
+      <form id="formDaftar" method="POST" enctype="multipart/form-data" novalidate>
         <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label">Nama Mahasiswa *</label>
-            <input id="namaMhs" class="form-control" required />
-          </div>
 
-          <div class="col-md-3">
-            <label class="form-label">NIM *</label>
-            <input id="nimMhs" class="form-control" required />
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label">Program Studi</label>
-            <input id="prodiMhs" class="form-control" />
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label">Pilih Beasiswa *</label>
-            <select id="pilihBeasiswa" class="form-select" required></select>
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label">Nomor Rekening *</label>
-            <input id="rekening" class="form-control" required />
-          </div>
-
+          <!-- ✅ STEP 1: PILIH BEASISWA (SELALU TAMPIL) -->
           <div class="col-12">
-            <div id="infoJumlahBerkas" class="mb-2"></div>
-            <div id="dynamicBerkasArea"></div>
+            <label class="form-label">Pilih Beasiswa <span class="text-danger">*</span></label>
+            <select id="pilihBeasiswa" class="form-select" required>
+              <option value="">-- Pilih Beasiswa --</option>
+            </select>
           </div>
 
-          <div class="col-12 text-end mt-3">
-            <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-primary">Kirim Pengajuan</button>
-          </div>
+          <!-- ✅ STEP 2: DETAIL (AWALNYA DISEMBUNYIKAN) -->
+          <div id="stepDetail" class="col-12 d-none">
+            <div class="row g-3">
 
+              <!-- PREVIEW BEASISWA -->
+              <div class="col-12">
+                <div id="beasiswaPreview" class="border rounded-3 p-3 bg-light d-none">
+                  <div class="row g-2">
+
+                    <div class="col-md-6">
+                      <div class="text-muted" style="font-size:12px;">Beasiswa</div>
+                      <div class="fw-semibold" id="pvJudul">-</div>
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="text-muted" style="font-size:12px;">Jenis</div>
+                      <div class="fw-semibold" id="pvJenis">-</div>
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="text-muted" style="font-size:12px;">Penyelenggara</div>
+                      <div class="fw-semibold" id="pvPenyelenggara">-</div>
+                    </div>
+
+                    <div class="col-md-8">
+                      <div class="text-muted" style="font-size:12px;">Periode Pendaftaran</div>
+                      <div class="fw-semibold" id="pvPeriode">-</div>
+                    </div>
+
+                    <div class="col-md-4 text-md-end">
+                      <a id="pvPdfLink" class="btn btn-outline-primary btn-sm d-none" target="_blank" rel="noopener">
+                        <i class="bi bi-file-earmark-pdf me-1"></i> Lihat PDF Detail
+                      </a>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="text-muted" style="font-size:12px;">Deskripsi</div>
+                      <div class="small text-muted" id="pvDeskripsi">-</div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- DATA MAHASISWA -->
+              <div class="col-md-6">
+                <label class="form-label">Nama Mahasiswa <span class="text-danger">*</span></label>
+                <input id="namaMhs" name="nama" class="form-control" required />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">NIM <span class="text-danger">*</span></label>
+                <input id="nimMhs" name="nim" class="form-control" required />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">Program Studi</label>
+                <input id="prodiMhs" name="prodi" class="form-control" />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Nomor Rekening <span class="text-danger">*</span></label>
+                <input id="rekening" name="rekening" class="form-control" required />
+              </div>
+
+<!-- BERKAS --> 
+<div class="col-12">
+  <div id="infoJumlahBerkas" class="mb-2"></div>
+
+  <div id="dynamicBerkasArea">
+    <label class="form-label">Upload Berkas sesuai persyaratan beasiswa</label>
+    <input type="file" class="form-control" id="berkasUpload" name="berkas[]" multiple>
+  </div>
+</div>
+
+              <!-- BUTTON -->
+              <div class="col-12 text-end mt-2">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary">Kirim Pengajuan</button>
+              </div>
+
+            </div>
+          </div>
         </div>
       </form>
 
     </div>
   </div>
 </div>
+
 
 <!-- MODAL DETAIL -->
 <div class="modal fade" id="modalDetail" tabindex="-1" aria-hidden="true">

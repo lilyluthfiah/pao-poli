@@ -1,230 +1,330 @@
-console.log("✅ beasiswa-admin.js loaded");
+console.log("beasiswa-mahasiswa.js LOADED ✅");
 
-const ENDPOINT_SIMPAN = "../backend/dosen/simpan_beasiswa.php";
+const BASE = "/pao-poli/pengumuman-akademik-online";
+const API = `${BASE}/backend/api/mahasiswa/beasiswa`;
 
-function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+// ===============================
+// UTIL
+// ===============================
+function escapeHtml(s) {
+  if (s === null || s === undefined) return "";
+  return String(s).replace(/[&<>"']/g, (m) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  }[m]));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const modalEl = document.getElementById("beasiswaModal");
-  const modal = modalEl ? bootstrap.Modal.getOrCreateInstance(modalEl) : null;
+function fmtDate(d) {
+  if (!d) return "-";
+  return d;
+}
 
-  // ===== TAB NAV =====
-  const tabs = Array.from(document.querySelectorAll("#beasiswaTabs button[data-bs-toggle='tab']"));
-  const prevTabBtn = document.getElementById("prevTabBtn");
-  const nextTabBtn = document.getElementById("nextTabBtn");
+// 🔥 fetch JSON yang TEGAS: kalau bukan JSON, lempar error
+async function fetchJson(url, opts = {}) {
+  const res = await fetch(url, { credentials: "include", ...opts });
+  const text = await res.text();
 
-  function getActiveIndex() {
-    return tabs.findIndex(t => t.classList.contains("active"));
-  }
-  function showTab(index) {
-    if (index < 0 || index >= tabs.length) return;
-    new bootstrap.Tab(tabs[index]).show();
-  }
-  function updateNavButtons() {
-    const i = getActiveIndex();
-    if (prevTabBtn) prevTabBtn.disabled = i <= 0;
-    if (nextTabBtn) nextTabBtn.disabled = i >= tabs.length - 1;
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (e) {
+    console.error("❌ Response bukan JSON:", url, "\n", text);
+    throw new Error("Response server bukan JSON (cek error PHP / warning).");
   }
 
-  prevTabBtn?.addEventListener("click", () => showTab(getActiveIndex() - 1));
-  nextTabBtn?.addEventListener("click", () => showTab(getActiveIndex() + 1));
-  tabs.forEach(t => t.addEventListener("shown.bs.tab", updateNavButtons));
+  if (!res.ok) {
+    throw new Error(data.message || `HTTP ${res.status}`);
+  }
+  return data;
+}
 
-  modalEl?.addEventListener("shown.bs.modal", () => {
-    showTab(0);
-    updateNavButtons();
+function setBeasiswaAvailability(isAvailable) {
+  // tombol ajukan jangan di-disable (karena mau pakai alert saat klik)
+  const submitBtn = document.querySelector('#formDaftar button[type="submit"]');
+  if (submitBtn) submitBtn.disabled = !isAvailable;
+
+  const select = document.getElementById("pilihBeasiswa");
+  if (select) select.disabled = !isAvailable;
+}
+
+// ===============================
+// SHOW/HIDE STEP DETAIL
+// ===============================
+function toggleStepDetail(show) {
+  const step = document.getElementById("stepDetail");
+  if (!step) return;
+  step.classList.toggle("d-none", !show);
+}
+
+// ===============================
+// PREVIEW BEASISWA
+// ===============================
+function showPreview(beasiswa) {
+  const wrap = document.getElementById("beasiswaPreview");
+  const pvJudul = document.getElementById("pvJudul");
+  const pvJenis = document.getElementById("pvJenis");
+  const pvPenyelenggara = document.getElementById("pvPenyelenggara");
+  const pvPeriode = document.getElementById("pvPeriode");
+  const pvDeskripsi = document.getElementById("pvDeskripsi");
+  const pvPdfLink = document.getElementById("pvPdfLink");
+
+  if (!wrap || !pvJudul || !pvJenis || !pvPenyelenggara || !pvPeriode || !pvDeskripsi || !pvPdfLink) {
+    console.warn("Elemen preview beasiswa tidak lengkap.");
+    return;
+  }
+
+  if (!beasiswa) {
+    wrap.classList.add("d-none");
+    pvPdfLink.classList.add("d-none");
+    pvPdfLink.removeAttribute("href");
+    return;
+  }
+
+  pvJudul.textContent = beasiswa.nama || "-";
+  pvJenis.textContent = beasiswa.jenis || "-";
+  pvPenyelenggara.textContent = beasiswa.penyelenggara || "-";
+  pvPeriode.textContent = `${fmtDate(beasiswa.tanggal_mulai)} s/d ${fmtDate(beasiswa.tanggal_akhir)}`;
+  pvDeskripsi.textContent = beasiswa.deskripsi || "-";
+
+  if (beasiswa.pdf_path) {
+    pvPdfLink.classList.remove("d-none");
+    pvPdfLink.href = (`${BASE}/${beasiswa.pdf_path}`).replaceAll("//", "/");
+  } else {
+    pvPdfLink.classList.add("d-none");
+    pvPdfLink.removeAttribute("href");
+  }
+
+  wrap.classList.remove("d-none");
+}
+
+// ===============================
+// STATE
+// ===============================
+let beasiswaList = [];
+let selectedBerkasRules = [];
+
+// ===============================
+// RENDER SYARAT BERKAS + UPLOAD BEBAS
+// ===============================
+function renderBerkasRules(rules) {
+  const area = document.getElementById("dynamicBerkasArea");
+  const info = document.getElementById("infoJumlahBerkas");
+  if (!area || !info) return;
+
+  area.innerHTML = "";
+
+  if (rules && rules.length) {
+    info.innerHTML = `<div class="alert alert-light border mb-2">
+      Syarat berkas: <b>${rules.length}</b> item (wajib/opsional).
+    </div>`;
+  } else {
+    info.innerHTML = `<div class="alert alert-light border mb-2">
+      Tidak ada syarat berkas khusus. Kamu tetap bisa upload berkas bebas.
+    </div>`;
+  }
+
+  (rules || []).forEach((bk) => {
+    const wajib = String(bk.wajib || "").toLowerCase() === "wajib";
+    const accept =
+      bk.tipe_file === "pdf" ? "application/pdf" :
+      bk.tipe_file === "jpg" ? "image/jpeg" :
+      bk.tipe_file === "png" ? "image/png" : "";
+
+    const key = String(bk.id);
+
+    const box = document.createElement("div");
+    box.className = "mb-2 p-2 border rounded";
+    box.innerHTML = `
+      <label class="form-label">
+        ${escapeHtml(bk.nama_berkas)}
+        ${wajib ? "<span class='text-danger'>*</span>" : "<span class='text-muted'>(opsional)</span>"}
+      </label>
+      <input
+        type="file"
+        class="form-control"
+        name="berkas_rule[${escapeHtml(key)}]"
+        ${accept ? `accept="${accept}"` : ""}
+        ${wajib ? "required" : ""}
+      >
+      <input type="hidden" name="nama_berkas_rule[${escapeHtml(key)}]" value="${escapeHtml(bk.nama_berkas)}">
+    `;
+    area.appendChild(box);
   });
 
-  updateNavButtons();
+  // upload bebas
+  const freeBox = document.createElement("div");
+  freeBox.className = "mb-2";
+  freeBox.innerHTML = `
+    <label class="form-label">Upload Berkas (boleh lebih dari 1)</label>
+    <input type="file" class="form-control" id="berkasUpload" name="berkas[]" multiple>
+    <div class="form-text">Kamu bisa pilih banyak file sekaligus.</div>
+  `;
+  area.appendChild(freeBox);
+}
 
-  // ===== CLICK DEBUGGER (biar kita tau klik sampai atau ketutup) =====
-  document.addEventListener("click", (e) => {
-    if (e.target.closest("#addPersyaratanBtn")) console.log("✅ KLIK: addPersyaratanBtn");
-    if (e.target.closest("#addBerkasBtn")) console.log("✅ KLIK: addBerkasBtn");
-    if (e.target.closest("#prevTabBtn")) console.log("✅ KLIK: prevTabBtn");
-    if (e.target.closest("#nextTabBtn")) console.log("✅ KLIK: nextTabBtn");
-    if (e.target.closest("#saveBtn")) console.log("✅ KLIK: saveBtn");
+// ===============================
+// LOAD BEASISWA
+// ===============================
+async function loadBeasiswa() {
+  console.log("LOAD BEASISWA =>", `${API}/list.php`);
+
+  const json = await fetchJson(`${API}/list.php`);
+  console.log("RESP BEASISWA =>", json);
+
+  beasiswaList = json.data || [];
+
+  const select = document.getElementById("pilihBeasiswa");
+  if (!select) return;
+
+  select.innerHTML = `<option value="">-- Pilih Beasiswa --</option>`;
+
+  if (!beasiswaList.length) {
+    select.innerHTML = `<option value="">-- Beasiswa belum tersedia --</option>`;
+    setBeasiswaAvailability(false);
+    return;
+  }
+
+  setBeasiswaAvailability(true);
+
+  beasiswaList.forEach((b) => {
+    const opt = document.createElement("option");
+    opt.value = b.id;
+    opt.textContent = `${b.nama} — ${b.jenis}`;
+    select.appendChild(opt);
   });
 
-  // ===== EVENT DELEGATION: PERSYARATAN =====
-  document.addEventListener("click", (e) => {
-    const btn = e.target.closest("#addPersyaratanBtn");
-    if (!btn) return;
+  // ✅ kalau cuma 1 beasiswa, auto pilih + trigger change
+  if (beasiswaList.length === 1) {
+    select.value = String(beasiswaList[0].id);
+    select.dispatchEvent(new Event("change"));
+  }
+}
 
-    const persyaratanInput = document.getElementById("persyaratanInput");
-    const persyaratanList = document.getElementById("persyaratanList");
-    if (!persyaratanInput || !persyaratanList) {
-      console.error("❌ persyaratanInput/persyaratanList tidak ditemukan");
-      return;
-    }
+// ===============================
+// LOAD PENGAJUAN
+// ===============================
+async function loadPengajuan() {
+  const json = await fetchJson(`${API}/list_pengajuan.php`);
+  const data = json.data || [];
 
-    const text = persyaratanInput.value.trim();
-    if (!text) return;
+  const tbody = document.getElementById("bodyPengajuan");
+  if (!tbody) return;
+  tbody.innerHTML = "";
 
-    const exists = Array.from(persyaratanList.querySelectorAll(".badge[data-value]"))
-      .some(b => (b.getAttribute("data-value") || "").toLowerCase() === text.toLowerCase());
-    if (exists) {
-      persyaratanInput.value = "";
-      return;
-    }
-
-    const badge = document.createElement("span");
-    badge.className = "badge bg-primary text-wrap";
-    badge.setAttribute("data-value", text);
-    badge.style.padding = "8px 10px";
-    badge.innerHTML = `${escapeHtml(text)}
-      <button type="button" class="btn-close btn-close-white btn-sm ms-2" aria-label="Close"></button>`;
-    persyaratanList.appendChild(badge);
-
-    persyaratanInput.value = "";
-    persyaratanInput.focus();
-  });
-
-  // hapus badge persyaratan
-  document.addEventListener("click", (e) => {
-    const closeBtn = e.target.closest("#persyaratanList .btn-close");
-    if (!closeBtn) return;
-    closeBtn.closest(".badge")?.remove();
-  });
-
-  // ===== EVENT DELEGATION: BERKAS =====
-  document.addEventListener("click", (e) => {
-    const btn = e.target.closest("#addBerkasBtn");
-    if (!btn) return;
-
-    const berkasNama = document.getElementById("berkasNama");
-    const berkasTipe = document.getElementById("berkasTipe");
-    const berkasSize = document.getElementById("berkasSize");
-    const berkasWajib = document.getElementById("berkasWajib");
-    const tableBerkasBody = document.querySelector("#tableBerkas tbody");
-
-    if (!berkasNama || !berkasTipe || !berkasSize || !berkasWajib || !tableBerkasBody) {
-      console.error("❌ elemen berkas tidak ditemukan");
-      return;
-    }
-
-    const nama = berkasNama.value.trim();
-    const tipe = berkasTipe.value.trim();
-    const maxRaw = berkasSize.value.trim();
-    const wajib = berkasWajib.value.trim();
-
-    if (!nama) return;
-
-    const maxNum = maxRaw === "" ? null : Number(maxRaw);
-    if (maxNum !== null && (!Number.isFinite(maxNum) || maxNum <= 0)) {
-      alert("Max MB harus angka > 0 (atau kosongkan).");
-      return;
-    }
-
-    const exists = Array.from(tableBerkasBody.querySelectorAll("tr"))
-      .some(tr => (tr.getAttribute("data-nama") || "").toLowerCase() === nama.toLowerCase());
-    if (exists) {
-      berkasNama.value = "";
-      return;
-    }
+  data.forEach((p, i) => {
+    const badge =
+      p.status === "DITERIMA" ? "success" :
+      p.status === "DITOLAK" ? "danger" : "warning";
 
     const tr = document.createElement("tr");
-    tr.setAttribute("data-nama", nama);
-    tr.setAttribute("data-tipe", tipe);
-    tr.setAttribute("data-maxmb", maxNum === null ? "" : String(Math.trunc(maxNum)));
-    tr.setAttribute("data-status", wajib);
-
     tr.innerHTML = `
-      <td>${escapeHtml(nama)}</td>
-      <td>${escapeHtml(tipe)}</td>
-      <td>${maxNum === null ? "-" : escapeHtml(String(Math.trunc(maxNum)))}</td>
-      <td>${wajib === "wajib" ? "Wajib" : "Opsional"}</td>
-      <td><button type="button" class="btn btn-sm btn-outline-danger" data-action="hapus-berkas">Hapus</button></td>
+      <td>${i + 1}</td>
+      <td>${escapeHtml(p.tanggal_daftar || p.created_at || "-")}</td>
+      <td>${escapeHtml(p.nama_beasiswa || "-")}</td>
+      <td>${escapeHtml(p.jenis || "-")}</td>
+      <td>${escapeHtml(p.rekening || "-")}</td>
+      <td>${escapeHtml(String(p.jumlah_berkas || 0))} berkas</td>
+      <td><span class="badge bg-${badge}">${escapeHtml(p.status || "-")}</span></td>
+      <td>
+        <button class="btn btn-sm btn-info me-1" data-view="${p.id}" title="Detail">
+          <i class="bi bi-eye"></i>
+        </button>
+        <button class="btn btn-sm btn-danger" data-del="${p.id}" title="Hapus">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
     `;
-
-    tableBerkasBody.appendChild(tr);
-
-    berkasNama.value = "";
-    berkasSize.value = "";
-    berkasWajib.value = "wajib";
-    berkasNama.focus();
+    tbody.appendChild(tr);
   });
 
-  // hapus row berkas
-  document.addEventListener("click", (e) => {
-    const btn = e.target.closest("button[data-action='hapus-berkas']");
-    if (!btn) return;
-    btn.closest("tr")?.remove();
-  });
-
-  // ===== SIMPAN =====
-  document.getElementById("saveBtn")?.addEventListener("click", async () => {
-    const persyaratanList = document.getElementById("persyaratanList");
-    const tableBerkasBody = document.querySelector("#tableBerkas tbody");
-
-    const data = {
-      nama: document.getElementById("namaBeasiswa").value.trim(),
-      jenis: document.getElementById("jenisBeasiswa").value.trim(),
-      penyelenggara: document.getElementById("penyelenggara").value.trim(),
-      deskripsi: document.getElementById("deskripsi").value.trim(),
-      tanggal_mulai: document.getElementById("tanggalMulai").value,
-      tanggal_akhir: document.getElementById("tanggalAkhir").value,
-      tanggal_seleksi: document.getElementById("tanggalSeleksi").value || null,
-      tanggal_pengumuman: document.getElementById("tanggalPengumuman").value || null,
-      min_ipk: document.getElementById("minIPK").value ? Number(document.getElementById("minIPK").value) : null,
-      min_semester: document.getElementById("minSemester").value ? Number(document.getElementById("minSemester").value) : null,
-      allowed_prodi: document.getElementById("allowedProdi").value.trim() || null,
-      persyaratan: [],
-      berkas: []
-    };
-
-    if (!data.nama || !data.jenis || !data.penyelenggara || !data.tanggal_mulai || !data.tanggal_akhir) {
-      alert("Nama, Jenis, Penyelenggara, Tanggal Mulai, dan Tanggal Akhir wajib diisi.");
-      return;
+  if (window.$ && $.fn.DataTable) {
+    if ($.fn.DataTable.isDataTable("#tabelPengajuan")) {
+      $("#tabelPengajuan").DataTable().destroy();
     }
+    $("#tabelPengajuan").DataTable({
+      paging: false,
+      searching: false,
+      info: false,
+    });
+  }
+}
 
-    // persyaratan
-    if (persyaratanList) {
-      data.persyaratan = Array.from(persyaratanList.querySelectorAll(".badge[data-value]"))
-        .map(b => (b.getAttribute("data-value") || "").trim())
-        .filter(Boolean);
-    }
+// ===============================
+// DOM READY
+// ===============================
+document.addEventListener("DOMContentLoaded", async () => {
+  // awal: sembunyikan detail
+  toggleStepDetail(false);
 
-    // berkas
-    if (tableBerkasBody) {
-      data.berkas = Array.from(tableBerkasBody.querySelectorAll("tr")).map(tr => {
-        const nama = tr.getAttribute("data-nama") || "";
-        const tipe = tr.getAttribute("data-tipe") || "pdf";
-        const maxRaw = tr.getAttribute("data-maxmb") || "";
-        const max = maxRaw === "" ? null : parseInt(maxRaw, 10);
-        const wajib = tr.getAttribute("data-status") || "wajib";
-        return { nama, tipe, max: Number.isFinite(max) ? max : null, wajib };
-      });
-    }
+  try {
+    await loadBeasiswa();
+  } catch (e) {
+    console.error("❌ loadBeasiswa error:", e);
+    beasiswaList = [];
+    setBeasiswaAvailability(false);
+  }
 
-    try {
-      const res = await fetch(ENDPOINT_SIMPAN, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      const out = await res.json();
-      alert(out.message || "Selesai");
+  try {
+    await loadPengajuan();
+  } catch (e) {
+    console.error("❌ loadPengajuan error:", e);
+  }
 
-      if (out.status === "success") {
-        modal?.hide();
-        // reset simple
-        modalEl.querySelectorAll("input, textarea, select").forEach(el => el.value = "");
-        document.getElementById("persyaratanList").innerHTML = "";
-        document.querySelector("#tableBerkas tbody").innerHTML = "";
-        showTab(0);
-        updateNavButtons();
+  // ✅ ALERT HANYA SAAT KLIK AJUKAN BEASISWA
+  const btnAjukan = document.querySelector('[data-bs-target="#modalDaftar"]');
+  if (btnAjukan) {
+    btnAjukan.addEventListener("click", (e) => {
+      if (!beasiswaList.length) {
+        e.preventDefault();
+        e.stopPropagation();
+        alert("Beasiswa belum tersedia.");
+        return false;
       }
-    } catch (err) {
-      console.error(err);
-      alert("Gagal menyimpan data");
-    }
-  });
+    }, true);
+  }
+
+  // pilih beasiswa => tampilkan stepDetail + preview + rules
+  const select = document.getElementById("pilihBeasiswa");
+  if (select) {
+    select.addEventListener("change", async function () {
+      const id = this.value;
+      console.log("SELECT CHANGE =>", id);
+
+      showPreview(null);
+      renderBerkasRules([]);
+
+      if (!id) {
+        toggleStepDetail(false);
+        return;
+      }
+
+      toggleStepDetail(true);
+
+      const b = beasiswaList.find((x) => String(x.id) === String(id));
+      showPreview(b);
+
+      try {
+        const json = await fetchJson(`${API}/detail.php?id=${encodeURIComponent(id)}`);
+        selectedBerkasRules = json.data?.berkas || [];
+        renderBerkasRules(selectedBerkasRules);
+      } catch (err) {
+        console.error("ERROR detail beasiswa:", err);
+        renderBerkasRules([]);
+      }
+    });
+  }
+
+  // reset saat modal dibuka
+  const modalEl = document.getElementById("modalDaftar");
+  if (modalEl) {
+    modalEl.addEventListener("show.bs.modal", () => {
+      document.getElementById("formDaftar")?.reset();
+      toggleStepDetail(false);
+      showPreview(null);
+      renderBerkasRules([]);
+    });
+  }
 });
